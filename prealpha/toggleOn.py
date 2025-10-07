@@ -25,6 +25,18 @@ def extraer_presets(texto: str):
     pattern = r'"preset"\s*\{[^{}]*(?:\{[^{}]*\}[^{}]*)*\}'
     return re.findall(pattern, texto, re.DOTALL)
 
+def desactivar_trackpads(block: str) -> str:
+    """
+    Convierte en 'inactive' cualquier línea que contenga 'trackpad'
+    y la palabra 'active' como palabra completa (no 'inactive').
+    """
+    nuevas_lineas = []
+    for linea in block.splitlines():
+        if "trackpad" in linea.lower() and re.search(r'\bactive\b', linea):
+            linea = re.sub(r'\bactive\b', 'inactive', linea, count=1)
+        nuevas_lineas.append(linea)
+    return "\n".join(nuevas_lineas)
+
 def duplicar_preset_default(texto: str) -> str:
     # Validación: ¿ya existe un preset con name="__backup"?
     if re.search(r'"preset"\s*\{[^{}]*"name"\s*"__backup"', texto):
@@ -51,7 +63,10 @@ def duplicar_preset_default(texto: str) -> str:
     backup_preset = re.sub(r'"id"\s*"[^"]+"', '"id" "9"', backup_preset, count=1)
     backup_preset = re.sub(r'"name"\s*"[^"]+"', '"name" "__backup"', backup_preset, count=1)
 
-    return texto.replace(default_block, default_block + "\n" + backup_preset, 1)
+    # Aplicar la regla: desactivar trackpads 'active' en el Default original
+    default_block_mod = desactivar_trackpads(default_block)
+
+    return texto.replace(default_block, default_block_mod + "\n" + backup_preset, 1)
 
 def find_matching_brace(text: str, open_index: int) -> int:
     depth = 0
@@ -113,7 +128,7 @@ def modificar_vdf(path: str):
     log(f"Backup creado en: {backup_path}")
 
     write_text(path, final_text)
-    log("Validaciones aplicadas. Modificaciones guardadas correctamente.")
+    log("Preset '__backup' y acción '__backup' añadidos correctamente, con trackpads activos desactivados en 'Default'.")
 
 if __name__ == "__main__":
     modificar_vdf(VDF_PATH)
