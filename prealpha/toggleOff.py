@@ -2,7 +2,8 @@ import re
 import shutil
 import os
 
-VDF_PATH = "D:/Toni/Desarrollo/testPython/controller_neptune.vdf"
+VDF_PATH = "/home/deck/.local/share/Steam/steamapps/common/Steam Controller Configs/312585954/config/668580/controller_neptune.vdf"
+#VDF_PATH = "D:/Toni/Desarrollo/testPython/controller_neptune.vdf"
 
 def log(msg: str):
     print(f"[LOG] {msg}")
