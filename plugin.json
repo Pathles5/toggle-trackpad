@@ -1,11 +1,10 @@
 {
   "name": "toggle-trackpad",
+  "display_name": "Toggle Trackpad",
+  "version": "1.0.0",
+  "description": "A simple Decky Plugin to toggle the Steam Deck trackpad on and off.",
   "author": "Apache Vegano",
-  "flags": ["debug", "_root"],
-  "api_version": 1,
-  "publish": {
-    "tags": ["template", "root"],
-    "description": "A simple Decky Plugin to toggle the Steam Deck trackpad on and off.",
-    "image": "https://opengraph.githubassets.com/1/SteamDeckHomebrew/PluginLoader"
-  }
+  "dependencies": [],
+  "assets": [],
+  "target_api": 2
 }
