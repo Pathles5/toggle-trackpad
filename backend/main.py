@@ -2,7 +2,7 @@ import logging
 import subprocess
 from decky_plugin import Plugin
 
-class ControllerPlugin(Plugin):
+class Plugin(Plugin):
     async def activate(self):
         logging.info("Activando preset...")
         subprocess.run(["python3", "/home/deck/.local/share/decky-loader/plugins/my-controller-plugin/backend/on.py"])
