@@ -1,5 +1,5 @@
 {
-  "name": "toggle-trackpad",
+  "name": "Toggle Trackpad",
   "author": "Apache Vegano",
   "flags": ["debug", "_root"],
   "api_version": 1,
