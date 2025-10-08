@@ -18,6 +18,7 @@ const ToggleButton: FC<ToggleButtonProps> = ({ label, backendMethod, serverAPI }
 
   return (
     <PanelSectionRow>
+      {/* 👇 Aquí el cambio: usamos label en lugar de children */}
       <ButtonItem layout="below" onClick={handleClick} label={label} />
     </PanelSectionRow>
   );
