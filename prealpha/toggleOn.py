@@ -2,7 +2,7 @@ import re
 import shutil
 import os
 
-#VDF_PATH = "D:/Toni/Desarrollo/testPython/controller_neptune.vdf"
+# VDF_PATH = "./controller_neptune.vdf"
 VDF_PATH = "/home/deck/.local/share/Steam/steamapps/common/Steam Controller Configs/312585954/config/668580/controller_neptune.vdf"
 
 def log(msg: str):
@@ -27,14 +27,12 @@ def extraer_presets(texto: str):
 
 def desactivar_trackpads(block: str) -> str:
     """
-    Convierte en 'inactive' cualquier línea que contenga 'trackpad'
-    y la palabra 'active' como palabra completa (no 'inactive').
+    Elimina cualquier línea que contenga 'trackpad' (clave y valor).
     """
     nuevas_lineas = []
     for linea in block.splitlines():
-        if "trackpad" in linea.lower() and re.search(r'\bactive\b', linea):
-            linea = re.sub(r'\bactive\b', 'inactive', linea, count=1)
-        nuevas_lineas.append(linea)
+        if "trackpad" not in linea.lower():
+            nuevas_lineas.append(linea)
     return "\n".join(nuevas_lineas)
 
 def duplicar_preset_default(texto: str) -> str:
