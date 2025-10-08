@@ -54,3 +54,4 @@ cli/*
 cli/decky
 
 .vscode/
+package-lock.json
