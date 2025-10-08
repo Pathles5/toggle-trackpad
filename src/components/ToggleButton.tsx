@@ -1,26 +1,25 @@
 import { FC } from "react";
-import { ButtonItem, PanelSectionRow, ServerAPI } from "decky-frontend-lib";
+import { ButtonItem } from "@decky/ui";
+import { call } from "@decky/api";
 
 interface ToggleButtonProps {
   label: string;
   backendMethod: string;
-  serverAPI: ServerAPI;
 }
 
-const ToggleButton: FC<ToggleButtonProps> = ({ label, backendMethod, serverAPI }) => {
+const ToggleButton: FC<ToggleButtonProps> = ({ label, backendMethod }) => {
   const handleClick = async () => {
     try {
-      await serverAPI.callPluginMethod(backendMethod, {});
+      await call(backendMethod, {});
     } catch (err) {
       console.error(`Error llamando a ${backendMethod}:`, err);
     }
   };
 
   return (
-    <PanelSectionRow>
-      {/* 👇 Aquí el cambio: usamos label en lugar de children */}
+    <>
       <ButtonItem layout="below" onClick={handleClick} label={label} />
-    </PanelSectionRow>
+    </>
   );
 };
 
