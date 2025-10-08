@@ -1,4 +1,5 @@
-import { definePlugin,/*  PanelSection, PanelSectionRow, */ ToggleField } from "decky-frontend-lib";
+import { definePlugin } from "@decky/api";
+import { /*definePlugin,  PanelSection, PanelSectionRow, */ ToggleField } from "decky-frontend-lib";
 import { FaGamepad } from "react-icons/fa";
 import { useState } from "react";
 

@@ -1,3 +1,33 @@
+// Decky Loader will pass this api in, it's versioned to allow for backwards compatibility.
+// @ts-ignore
+
+// Prevents it from being duplicated in output.
+const manifest = {"name":"toggle-trackpad"};
+const API_VERSION = 2;
+const internalAPIConnection = window.__DECKY_SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED_deckyLoaderAPIInit;
+// Initialize
+if (!internalAPIConnection) {
+    throw new Error('[@decky/api]: Failed to connect to the loader as as the loader API was not initialized. This is likely a bug in Decky Loader.');
+}
+// Version 1 throws on version mismatch so we have to account for that here.
+let api;
+try {
+    api = internalAPIConnection.connect(API_VERSION, manifest.name);
+}
+catch {
+    api = internalAPIConnection.connect(1, manifest.name);
+    console.warn(`[@decky/api] Requested API version ${API_VERSION} but the running loader only supports version 1. Some features may not work.`);
+}
+if (api._version != API_VERSION) {
+    console.warn(`[@decky/api] Requested API version ${API_VERSION} but the running loader only supports version ${api._version}. Some features may not work.`);
+}
+const definePlugin = (fn) => {
+    return (...args) => {
+        // TODO: Maybe wrap this
+        return fn(...args);
+    };
+};
+
 let webpackCache = {};
 let hasWebpack5 = false;
 if (window.webpackJsonp && !window.webpackJsonp.deckyShimmed) {
@@ -74,14 +104,6 @@ allModules.find((m) => {
 });
 
 const ToggleField = Object.values(CommonUIModule).find((mod) => mod?.render?.toString()?.includes('ToggleField,fallback'));
-
-// TypeScript helper function
-const definePlugin = (fn) => {
-    return (...args) => {
-        // TODO: Maybe wrap this
-        return fn(...args);
-    };
-};
 
 var DefaultContext = {
   color: undefined,
