@@ -1,4 +1,4 @@
-import { definePlugin } from "@decky/api";
+import { definePlugin } from "@decky/ui";
 import { PanelSection, PanelSectionRow, ToggleField } from "@decky/ui";
 import { FaGamepad } from "react-icons/fa";
 import { useState } from "react";
@@ -12,10 +12,7 @@ const ToggleDemo = () => {
         <ToggleField
           label="Activar Trackpad"
           checked={enabled}
-          onChange={(val: boolean) => {
-            setEnabled(val);
-            console.log("Toggle cambiado:", val);
-          }}
+          onChange={(val: boolean) => setEnabled(val)}
         />
       </PanelSectionRow>
     </PanelSection>
@@ -24,7 +21,6 @@ const ToggleDemo = () => {
 
 export default definePlugin(() => {
   return {
-    name: "Toggle Trackpad",
     title: <div className="title">Toggle Trackpad</div>,
     content: <ToggleDemo />,
     icon: <FaGamepad />,

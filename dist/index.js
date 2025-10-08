@@ -1,33 +1,3 @@
-// Decky Loader will pass this api in, it's versioned to allow for backwards compatibility.
-// @ts-ignore
-
-// Prevents it from being duplicated in output.
-const manifest = {"name":"Toggle Trackpad"};
-const API_VERSION = 2;
-const internalAPIConnection = window.__DECKY_SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED_deckyLoaderAPIInit;
-// Initialize
-if (!internalAPIConnection) {
-    throw new Error('[@decky/api]: Failed to connect to the loader as as the loader API was not initialized. This is likely a bug in Decky Loader.');
-}
-// Version 1 throws on version mismatch so we have to account for that here.
-let api;
-try {
-    api = internalAPIConnection.connect(API_VERSION, manifest.name);
-}
-catch {
-    api = internalAPIConnection.connect(1, manifest.name);
-    console.warn(`[@decky/api] Requested API version ${API_VERSION} but the running loader only supports version 1. Some features may not work.`);
-}
-if (api._version != API_VERSION) {
-    console.warn(`[@decky/api] Requested API version ${API_VERSION} but the running loader only supports version ${api._version}. Some features may not work.`);
-}
-const definePlugin = (fn) => {
-    return (...args) => {
-        // TODO: Maybe wrap this
-        return fn(...args);
-    };
-};
-
 var DefaultContext = {
   color: undefined,
   size: undefined,
@@ -94,14 +64,10 @@ const ToggleDemo = () => {
     const [enabled, setEnabled] = SP_REACT.useState(false);
     return (window.SP_REACT.createElement(DFL.PanelSection, { title: "Demo" },
         window.SP_REACT.createElement(DFL.PanelSectionRow, null,
-            window.SP_REACT.createElement(DFL.ToggleField, { label: "Activar Trackpad", checked: enabled, onChange: (val) => {
-                    setEnabled(val);
-                    console.log("Toggle cambiado:", val);
-                } }))));
+            window.SP_REACT.createElement(DFL.ToggleField, { label: "Activar Trackpad", checked: enabled, onChange: (val) => setEnabled(val) }))));
 };
-var index = definePlugin(() => {
+var index = DFL.definePlugin(() => {
     return {
-        name: "Toggle Trackpad",
         title: window.SP_REACT.createElement("div", { className: "title" }, "Toggle Trackpad"),
         content: window.SP_REACT.createElement(ToggleDemo, null),
         icon: window.SP_REACT.createElement(FaGamepad, null),
