@@ -60,15 +60,55 @@ function FaGamepad (props) {
   return GenIcon({"tag":"svg","attr":{"viewBox":"0 0 640 512"},"child":[{"tag":"path","attr":{"d":"M480.07 96H160a160 160 0 1 0 114.24 272h91.52A160 160 0 1 0 480.07 96zM248 268a12 12 0 0 1-12 12h-52v52a12 12 0 0 1-12 12h-24a12 12 0 0 1-12-12v-52H84a12 12 0 0 1-12-12v-24a12 12 0 0 1 12-12h52v-52a12 12 0 0 1 12-12h24a12 12 0 0 1 12 12v52h52a12 12 0 0 1 12 12zm216 76a40 40 0 1 1 40-40 40 40 0 0 1-40 40zm64-96a40 40 0 1 1 40-40 40 40 0 0 1-40 40z"},"child":[]}]})(props);
 }
 
+// Decky Loader will pass this api in, it's versioned to allow for backwards compatibility.
+// @ts-ignore
+
+// Prevents it from being duplicated in output.
+const manifest = {"name":"Toggle-Trackpad","author":"Apache Vegano","flags":["debug","_root"],"api_version":1,"publish":{"tags":["template","root","trackpad","disable","enable","toggle","backup"],"description":"A simple Decky Plugin to toggle the Steam Deck trackpad on and off.","image":"https://opengraph.githubassets.com/1/SteamDeckHomebrew/PluginLoader"}};
+const API_VERSION = 2;
+const internalAPIConnection = window.__DECKY_SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED_deckyLoaderAPIInit;
+// Initialize
+if (!internalAPIConnection) {
+    throw new Error('[@decky/api]: Failed to connect to the loader as as the loader API was not initialized. This is likely a bug in Decky Loader.');
+}
+// Version 1 throws on version mismatch so we have to account for that here.
+let api;
+try {
+    api = internalAPIConnection.connect(API_VERSION, manifest.name);
+}
+catch {
+    api = internalAPIConnection.connect(1, manifest.name);
+    console.warn(`[@decky/api] Requested API version ${API_VERSION} but the running loader only supports version 1. Some features may not work.`);
+}
+if (api._version != API_VERSION) {
+    console.warn(`[@decky/api] Requested API version ${API_VERSION} but the running loader only supports version ${api._version}. Some features may not work.`);
+}
+// TODO these could use a lot of JSDoc
+const call = api.call;
+
 const PluginContent = () => {
     const [enabled, setEnabled] = SP_REACT.useState(false);
-    const toggleOn = () => {
-        console.log("Trackpad activado");
+    const toggleOn = async () => {
+        console.log("Desactivando Trackpad...");
         // aquí tu lógica de encendido
+        try {
+            await call("activate", { enable: true });
+            console.log("Trackpad Desactivado!");
+        }
+        catch (error) {
+            console.error("Error al deshabilitar el trackpad:", error);
+        }
     };
-    const toggleOff = () => {
-        console.log("Trackpad desactivado");
+    const toggleOff = async () => {
+        console.log("Restaurando Trackpads...");
         // aquí tu lógica de apagado
+        try {
+            await call("restore", { enable: false });
+            console.log("Trackpads Restaurandos!!!");
+        }
+        catch (error) {
+            console.error("Error al restaurar el trackpad:", error);
+        }
     };
     return (window.SP_REACT.createElement(DFL.PanelSection, { title: "Opciones" },
         window.SP_REACT.createElement(DFL.PanelSectionRow, null,

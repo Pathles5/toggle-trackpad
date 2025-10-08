@@ -1,17 +1,31 @@
 import { PanelSection, PanelSectionRow, ToggleField } from "@decky/ui";
 import { useState } from "react";
+import { call } from "@decky/api";
 
 const PluginContent = () => {
   const [enabled, setEnabled] = useState(false);
 
-  const toggleOn = () => {
-    console.log("Trackpad activado");
+  const toggleOn = async () => {
+    console.log("Desactivando Trackpad...");
     // aquí tu lógica de encendido
-  };
+    try {
+        await call("activate", { enable: true });
+        console.log("Trackpad Desactivado!");
+    } catch (error) {
+        console.error("Error al deshabilitar el trackpad:", error);        
+    }
+    
+};
 
-  const toggleOff = () => {
-    console.log("Trackpad desactivado");
+const toggleOff = async () => {
+    console.log("Restaurando Trackpads...");
     // aquí tu lógica de apagado
+    try {
+        await call("restore", { enable: false });
+        console.log("Trackpads Restaurandos!!!");
+    } catch (error) {
+        console.error("Error al restaurar el trackpad:", error);        
+    }
   };
 
   return (
