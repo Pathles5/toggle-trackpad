@@ -45,19 +45,6 @@ const findModule = (filter) => {
             return m;
     }
 };
-const findModuleChild = (filter) => {
-    for (const m of allModules) {
-        for (const mod of [m.default, m]) {
-            const filterRes = filter(mod);
-            if (filterRes) {
-                return filterRes;
-            }
-            else {
-                continue;
-            }
-        }
-    }
-};
 const CommonUIModule = allModules.find((m) => {
     if (typeof m !== 'object')
         return false;
@@ -85,24 +72,6 @@ allModules.find((m) => {
     }
     return false;
 });
-
-findModuleChild((mod) => {
-    if (typeof mod !== 'object' || !mod.__esModule)
-        return undefined;
-    return mod.Panel;
-});
-const [panelSection, mod] = findModuleChild((mod) => {
-    for (let prop in mod) {
-        if (mod[prop]?.toString()?.includes('.PanelSection')) {
-            return [mod[prop], mod];
-        }
-    }
-    return null;
-});
-const PanelSection = panelSection;
-// New as of Feb 22 2023 Beta || Old
-const PanelSectionRow = (mod.PanelSectionRow ||
-    Object.values(mod).filter((exp) => !exp?.toString()?.includes('.PanelSection'))[0]);
 
 const ToggleField = Object.values(CommonUIModule).find((mod) => mod?.render?.toString()?.includes('ToggleField,fallback'));
 
@@ -176,17 +145,25 @@ function FaGamepad (props) {
   return GenIcon({"attr":{"viewBox":"0 0 640 512"},"child":[{"tag":"path","attr":{"d":"M480.07 96H160a160 160 0 1 0 114.24 272h91.52A160 160 0 1 0 480.07 96zM248 268a12 12 0 0 1-12 12h-52v52a12 12 0 0 1-12 12h-24a12 12 0 0 1-12-12v-52H84a12 12 0 0 1-12-12v-24a12 12 0 0 1 12-12h52v-52a12 12 0 0 1 12-12h24a12 12 0 0 1 12 12v52h52a12 12 0 0 1 12 12zm216 76a40 40 0 1 1 40-40 40 40 0 0 1-40 40zm64-96a40 40 0 1 1 40-40 40 40 0 0 1-40 40z"},"child":[]}]})(props);
 }
 
-var index = definePlugin(() => {
+const ToggleDemo = () => {
     const [enabled, setEnabled] = SP_REACT.useState(false);
+    return (window.SP_REACT.createElement(window.SP_REACT.Fragment, null,
+        window.SP_REACT.createElement(ToggleField, { label: "Activar Trackpad", checked: enabled, onChange: (val) => {
+                setEnabled(val);
+                console.log("Toggle cambiado:", val);
+            } })));
+};
+var index = definePlugin(() => {
     return {
-        title: window.SP_REACT.createElement("div", { className: "title" }, "Toggle Trackpad"),
-        content: (window.SP_REACT.createElement(PanelSection, { title: "Demo" },
-            window.SP_REACT.createElement(PanelSectionRow, null,
-                window.SP_REACT.createElement(ToggleField, { label: "Activar Trackpad", checked: enabled, onChange: (val) => {
-                        setEnabled(val);
-                        console.log("Toggle cambiado:", val);
-                    } })))),
+        name: "Toggle Trackpad",
+        title: window.SP_REACT.createElement("div", null, "Toggle Trackpad TTL"),
+        titleView: window.SP_REACT.createElement("div", null, "Toggle Trackpad TBL"),
+        content: window.SP_REACT.createElement(ToggleDemo, null), // 👈 aquí usamos el componente
         icon: window.SP_REACT.createElement(FaGamepad, null),
+        alwaysRender: true,
+        onDismount() {
+            console.log("Toggle Trackpad Plugin unmounted");
+        },
     };
 });
 
