@@ -1,110 +1,3 @@
-// Decky Loader will pass this api in, it's versioned to allow for backwards compatibility.
-// @ts-ignore
-
-// Prevents it from being duplicated in output.
-const manifest = {"name":"toggle-trackpad"};
-const API_VERSION = 2;
-const internalAPIConnection = window.__DECKY_SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED_deckyLoaderAPIInit;
-// Initialize
-if (!internalAPIConnection) {
-    throw new Error('[@decky/api]: Failed to connect to the loader as as the loader API was not initialized. This is likely a bug in Decky Loader.');
-}
-// Version 1 throws on version mismatch so we have to account for that here.
-let api;
-try {
-    api = internalAPIConnection.connect(API_VERSION, manifest.name);
-}
-catch {
-    api = internalAPIConnection.connect(1, manifest.name);
-    console.warn(`[@decky/api] Requested API version ${API_VERSION} but the running loader only supports version 1. Some features may not work.`);
-}
-if (api._version != API_VERSION) {
-    console.warn(`[@decky/api] Requested API version ${API_VERSION} but the running loader only supports version ${api._version}. Some features may not work.`);
-}
-const definePlugin = (fn) => {
-    return (...args) => {
-        // TODO: Maybe wrap this
-        return fn(...args);
-    };
-};
-
-let webpackCache = {};
-let hasWebpack5 = false;
-if (window.webpackJsonp && !window.webpackJsonp.deckyShimmed) {
-    // Webpack 4, currently on stable
-    const wpRequire = window.webpackJsonp.push([
-        [],
-        { get_require: (mod, _exports, wpRequire) => (mod.exports = wpRequire) },
-        [['get_require']],
-    ]);
-    delete wpRequire.m.get_require;
-    delete wpRequire.c.get_require;
-    webpackCache = wpRequire.c;
-}
-else {
-    // Webpack 5, currently on beta
-    hasWebpack5 = true;
-    const id = Math.random();
-    let initReq;
-    window.webpackChunksteamui.push([
-        [id],
-        {},
-        (r) => {
-            initReq = r;
-        },
-    ]);
-    for (let i of Object.keys(initReq.m)) {
-        try {
-            webpackCache[i] = initReq(i);
-        }
-        catch (e) {
-            console.debug("[DFL:Webpack]: Ignoring require error for module", i, e);
-        }
-    }
-}
-const allModules = hasWebpack5
-    ? Object.values(webpackCache).filter((x) => x)
-    : Object.keys(webpackCache)
-        .map((x) => webpackCache[x].exports)
-        .filter((x) => x);
-const findModule = (filter) => {
-    for (const m of allModules) {
-        if (m.default && filter(m.default))
-            return m.default;
-        if (filter(m))
-            return m;
-    }
-};
-const CommonUIModule = allModules.find((m) => {
-    if (typeof m !== 'object')
-        return false;
-    for (let prop in m) {
-        if (m[prop]?.contextType?._currentValue && Object.keys(m).length > 60)
-            return true;
-    }
-    return false;
-});
-findModule((m) => {
-    if (typeof m !== 'object')
-        return false;
-    for (let prop in m) {
-        if (m[prop]?.toString && /Spinner\)}\),.\.createElement\(\"path\",{d:\"M18 /.test(m[prop].toString()))
-            return true;
-    }
-    return false;
-});
-allModules.find((m) => {
-    if (typeof m !== 'object')
-        return undefined;
-    for (let prop in m) {
-        if (m[prop]?.computeRootMatch)
-            return true;
-    }
-    return false;
-});
-
-const ToggleField = Object.values(CommonUIModule).find((mod) => mod?.render?.toString()?.includes('ToggleField,fallback'));
-
 var DefaultContext = {
   color: undefined,
   size: undefined,
@@ -170,12 +63,14 @@ function FaGamepad (props) {
 const ToggleDemo = () => {
     const [enabled, setEnabled] = SP_REACT.useState(false);
     return (window.SP_REACT.createElement(window.SP_REACT.Fragment, null,
-        window.SP_REACT.createElement(ToggleField, { label: "Activar Trackpad", checked: enabled, onChange: (val) => {
-                setEnabled(val);
-                console.log("Toggle cambiado:", val);
-            } })));
+        window.SP_REACT.createElement(DFL.PanelSection, { title: "Demo" },
+            window.SP_REACT.createElement(DFL.PanelSectionRow, null,
+                window.SP_REACT.createElement(DFL.ToggleField, { label: "Activar Trackpad", checked: enabled, onChange: (val) => {
+                        setEnabled(val);
+                        console.log("Toggle cambiado:", val);
+                    } })))));
 };
-var index = definePlugin(() => {
+var index = DFL.definePlugin(() => {
     return {
         name: "Toggle Trackpad",
         title: window.SP_REACT.createElement("div", null, "Toggle Trackpad TTL"),
