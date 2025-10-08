@@ -2,25 +2,29 @@ import { definePlugin, PanelSection, PanelSectionRow, ToggleField } from "decky-
 import { FaGamepad } from "react-icons/fa";
 import { useState } from "react";
 
-export default definePlugin(() => {
+const ToggleDemo = () => {
   const [enabled, setEnabled] = useState(false);
 
+  return (
+    <PanelSection title="Demo">
+      <PanelSectionRow>
+        <ToggleField
+          label="Activar Trackpad"
+          checked={enabled}
+          onChange={(val: boolean) => {
+            setEnabled(val);
+            console.log("Toggle cambiado:", val);
+          }}
+        />
+      </PanelSectionRow>
+    </PanelSection>
+  );
+};
+
+export default definePlugin(() => {
   return {
     title: <div className="title">Toggle Trackpad</div>,
-    content: (
-      <PanelSection title="Demo">
-        <PanelSectionRow>
-          <ToggleField
-            label="Activar Trackpad"
-            checked={enabled}
-            onChange={(val: boolean) => {
-              setEnabled(val);
-              console.log("Toggle cambiado:", val);
-            }}
-          />
-        </PanelSectionRow>
-      </PanelSection>
-    ),
+    content: <ToggleDemo />,   // 👈 aquí usamos el componente
     icon: <FaGamepad />,
   };
 });
