@@ -1,5 +1,4 @@
-import { definePlugin } from "@decky/api";
-import { /*definePlugin,  PanelSection, PanelSectionRow, */ ToggleField } from "decky-frontend-lib";
+import { definePlugin,  PanelSection, PanelSectionRow, ToggleField } from "@decky/ui";
 import { FaGamepad } from "react-icons/fa";
 import { useState } from "react";
 
@@ -8,8 +7,8 @@ const ToggleDemo = () => {
 
     return (
         <>      
-            {/* <PanelSection title="Demo">
-                <PanelSectionRow> */}
+            <PanelSection title="Demo">
+                <PanelSectionRow>
                     <ToggleField
                         label="Activar Trackpad"
                         checked={enabled}
@@ -18,8 +17,8 @@ const ToggleDemo = () => {
                             console.log("Toggle cambiado:", val);
                         }}
                     />
-                {/* </PanelSectionRow>
-            </PanelSection> */}
+                </PanelSectionRow>
+            </PanelSection>
         </>
     );
 };
