@@ -86,10 +86,6 @@ allModules.find((m) => {
     return false;
 });
 
-const ButtonItem = (CommonUIModule.ButtonField ||
-    Object.values(CommonUIModule).find((mod) => mod?.render?.toString()?.includes('"highlightOnFocus","childrenContainerWidth"') ||
-        mod?.render?.toString()?.includes('childrenContainerWidth:"min"')));
-
 findModuleChild((mod) => {
     if (typeof mod !== 'object' || !mod.__esModule)
         return undefined;
@@ -107,6 +103,8 @@ const PanelSection = panelSection;
 // New as of Feb 22 2023 Beta || Old
 const PanelSectionRow = (mod.PanelSectionRow ||
     Object.values(mod).filter((exp) => !exp?.toString()?.includes('.PanelSection'))[0]);
+
+const ToggleField = Object.values(CommonUIModule).find((mod) => mod?.render?.toString()?.includes('ToggleField,fallback'));
 
 // TypeScript helper function
 const definePlugin = (fn) => {
@@ -178,25 +176,16 @@ function FaGamepad (props) {
   return GenIcon({"attr":{"viewBox":"0 0 640 512"},"child":[{"tag":"path","attr":{"d":"M480.07 96H160a160 160 0 1 0 114.24 272h91.52A160 160 0 1 0 480.07 96zM248 268a12 12 0 0 1-12 12h-52v52a12 12 0 0 1-12 12h-24a12 12 0 0 1-12-12v-52H84a12 12 0 0 1-12-12v-24a12 12 0 0 1 12-12h52v-52a12 12 0 0 1 12-12h24a12 12 0 0 1 12 12v52h52a12 12 0 0 1 12 12zm216 76a40 40 0 1 1 40-40 40 40 0 0 1-40 40zm64-96a40 40 0 1 1 40-40 40 40 0 0 1-40 40z"},"child":[]}]})(props);
 }
 
-const ToggleButton = ({ label, backendMethod, serverAPI }) => {
-    const handleClick = async () => {
-        try {
-            await serverAPI.callPluginMethod(backendMethod, {});
-        }
-        catch (err) {
-            console.error(`Error llamando a ${backendMethod}:`, err);
-        }
-    };
-    return (window.SP_REACT.createElement(PanelSectionRow, null,
-        window.SP_REACT.createElement(ButtonItem, { layout: "below", onClick: handleClick, label: label })));
-};
-
-var index = definePlugin((serverAPI) => {
+var index = definePlugin(() => {
+    const [enabled, setEnabled] = SP_REACT.useState(false);
     return {
-        title: window.SP_REACT.createElement("div", { className: "title" }, "Controller Preset Manager"),
-        content: (window.SP_REACT.createElement(PanelSection, { title: "Controller Preset" },
-            window.SP_REACT.createElement(ToggleButton, { label: "Activar Backup", backendMethod: "activate", serverAPI: serverAPI }),
-            window.SP_REACT.createElement(ToggleButton, { label: "Restaurar Default", backendMethod: "restore", serverAPI: serverAPI }))),
+        title: window.SP_REACT.createElement("div", { className: "title" }, "Toggle Trackpad"),
+        content: (window.SP_REACT.createElement(PanelSection, { title: "Demo" },
+            window.SP_REACT.createElement(PanelSectionRow, null,
+                window.SP_REACT.createElement(ToggleField, { label: "Activar Trackpad", checked: enabled, onChange: (val) => {
+                        setEnabled(val);
+                        console.log("Toggle cambiado:", val);
+                    } })))),
         icon: window.SP_REACT.createElement(FaGamepad, null),
     };
 });

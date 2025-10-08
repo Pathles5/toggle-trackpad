@@ -1,15 +1,24 @@
-import { definePlugin, PanelSection } from "decky-frontend-lib";
+import { definePlugin, PanelSection, PanelSectionRow, ToggleField } from "decky-frontend-lib";
 import { FaGamepad } from "react-icons/fa";
-import ToggleButton from "./components/ToggleButton";
+import { useState } from "react";
 
-export default definePlugin((serverAPI) => {
+export default definePlugin(() => {
+  const [enabled, setEnabled] = useState(false);
+
   return {
-    title: <div className="title">Controller Preset Manager</div>,
+    title: <div className="title">Toggle Trackpad</div>,
     content: (
-      <PanelSection title="Controller Preset">
-        {/* 👇 Aquí el cambio: pasamos serverAPI como prop */}
-        <ToggleButton label="Activar Backup" backendMethod="activate" serverAPI={serverAPI} />
-        <ToggleButton label="Restaurar Default" backendMethod="restore" serverAPI={serverAPI} />
+      <PanelSection title="Demo">
+        <PanelSectionRow>
+          <ToggleField
+            label="Activar Trackpad"
+            checked={enabled}
+            onChange={(val: boolean) => {
+              setEnabled(val);
+              console.log("Toggle cambiado:", val);
+            }}
+          />
+        </PanelSectionRow>
       </PanelSection>
     ),
     icon: <FaGamepad />,
