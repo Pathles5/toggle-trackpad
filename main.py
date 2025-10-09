@@ -1,7 +1,6 @@
 import sys
 import os
 import decky
-import subprocess
 import json
 from pathlib import Path
 sys.path.append(os.path.join(os.path.dirname(__file__), "backend"))
@@ -51,10 +50,7 @@ class Plugin:
 
     async def get_running_game(self):
         try:
-            game =  {
-                    "display_name": "placeholder",
-                    "appid": "123123"
-                }
+            game =  None
             if game:
                 decky.logger.info(f"Juego en ejecución: {game['display_name']} ({game['appid']})")
                 return {

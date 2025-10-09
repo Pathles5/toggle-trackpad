@@ -1,6 +1,6 @@
 from utils import read_text, write_text, backup_file
 from parseVdf import find_matching_brace
-from logger import *
+import decky
 import re
 import os
 
@@ -14,17 +14,17 @@ def desactivar_trackpads(block: str) -> str:
 
 def duplicar_preset_default(texto: str) -> str:
     if re.search(r'"preset"\s*\{[^{}]*"name"\s*"__backup"', texto):
-        log_warn("Ya existe un preset '__backup'. No se duplica.")
+        decky.logger.warning("Ya existe un preset '__backup'. No se duplica.")
         return texto
 
     presets = extraer_presets(texto)
     default_block = next((b for b in presets if re.search(r'"name"\s*"Default"', b)), None)
 
     if not default_block:
-        log_warn("No se encontró preset 'Default'. Saltando duplicación.")
+        decky.logger.warning("No se encontró preset 'Default'. Saltando duplicación.")
         return texto
 
-    log_info("Duplicando preset 'Default' como '__backup'...")
+    decky.logger.info("Duplicando preset 'Default' como '__backup'...")
     backup = re.sub(r'"id"\s*"[^"]+"', '"id" "9"', default_block, count=1)
     backup = re.sub(r'"name"\s*"[^"]+"', '"name" "__backup"', backup, count=1)
     default_mod = desactivar_trackpads(default_block)
@@ -33,12 +33,12 @@ def duplicar_preset_default(texto: str) -> str:
 
 def duplicar_action_default(texto: str) -> str:
     if re.search(r'"__backup"\s*\{', texto):
-        log_warn("Ya existe acción '__backup'. No se duplica.")
+        decky.logger.warning("Ya existe acción '__backup'. No se duplica.")
         return texto
 
     actions_match = re.search(r'"actions"\s*\{', texto)
     if not actions_match:
-        log_warn("No se encontró bloque 'actions'.")
+        decky.logger.warning("No se encontró bloque 'actions'.")
         return texto
 
     open_idx = actions_match.end() - 1
@@ -47,14 +47,14 @@ def duplicar_action_default(texto: str) -> str:
 
     default_match = re.search(r'"Default"\s*\{', actions_block)
     if not default_match:
-        log_warn("No se encontró acción 'Default'.")
+        decky.logger.warning("No se encontró acción 'Default'.")
         return texto
 
     def_open = default_match.end() - 1
     def_close = find_matching_brace(actions_block, def_open)
     default_subblock = actions_block[default_match.start():def_close + 1]
 
-    log_info("Duplicando acción 'Default' como '__backup'...")
+    decky.logger.info("Duplicando acción 'Default' como '__backup'...")
     backup = re.sub(r'"Default"\s*\{', '"__backup"\n{', default_subblock, count=1)
     backup = re.sub(r'"title"\s*"[^"]+"', '"title" "Backup"', backup, count=1)
 
@@ -63,19 +63,19 @@ def duplicar_action_default(texto: str) -> str:
 
 def modificar_vdf(path: str):
     if not os.path.exists(path):
-        log_error(f"Archivo no encontrado: {path}")
+        decky.logger.error(f"Archivo no encontrado: {path}")
         return False
 
-    log_info("Modificando VDF...")
+    decky.logger.info("Modificando VDF...")
     original = read_text(path)
     modificado = duplicar_preset_default(original)
     final = duplicar_action_default(modificado)
 
     backup_path = backup_file(path, ".bak")
-    log_info(f"Backup creado en: {backup_path}")
+    decky.logger.info(f"Backup creado en: {backup_path}")
 
     write_text(path, final)
-    log_info("Modificación completada.")
+    decky.logger.info("Modificación completada.")
     return True
 
 # 🔧 Restaurar: revertir preset y acción
@@ -85,10 +85,10 @@ def restaurar_preset(texto: str) -> str:
     backup = next((b for b in presets if re.search(r'"name"\s*"__backup"', b)), None)
 
     if not backup:
-        log_error("No existe preset '__backup'.")
+        decky.logger.error("No existe preset '__backup'.")
         return texto
 
-    log_info("Restaurando preset 'Default' desde '__backup'...")
+    decky.logger.info("Restaurando preset 'Default' desde '__backup'...")
     restored = re.sub(r'"id"\s*"[^"]+"', '"id" "0"', backup, count=1)
     restored = re.sub(r'"name"\s*"[^"]+"', '"name" "Default"', restored, count=1)
 
@@ -99,29 +99,29 @@ def restaurar_preset(texto: str) -> str:
 def limpiar_action_backup(texto: str) -> str:
     match = re.search(r'"__backup"\s*\{', texto)
     if not match:
-        log_error("No existe acción '__backup'.")
+        decky.logger.error("No existe acción '__backup'.")
         return texto
 
     open_idx = match.end() - 1
     close_idx = find_matching_brace(texto, open_idx)
     backup_block = texto[match.start():close_idx + 1]
 
-    log_info("Eliminando acción '__backup'...")
+    decky.logger.info("Eliminando acción '__backup'...")
     return texto.replace(backup_block, "", 1)
 
 def restaurar_vdf(path: str):
     if not os.path.exists(path):
-        log_error(f"Archivo no encontrado: {path}")
+        decky.logger.error(f"Archivo no encontrado: {path}")
         return False
 
-    log_info("Restaurando VDF...")
+    decky.logger.info("Restaurando VDF...")
     original = read_text(path)
     restaurado = restaurar_preset(original)
     final = limpiar_action_backup(restaurado)
 
     backup_path = backup_file(path, ".restorebak")
-    log_info(f"Backup de seguridad creado en: {backup_path}")
+    decky.logger.info(f"Backup de seguridad creado en: {backup_path}")
 
     write_text(path, final)
-    log_info("Restauración completada.")
+    decky.logger.info("Restauración completada.")
     return True
