@@ -5,6 +5,7 @@ import json
 from pathlib import Path
 sys.path.append(os.path.join(os.path.dirname(__file__), "backend"))
 from toggle import modificar_vdf, restaurar_vdf
+from utils import detect_game_from_process
 
 STATE_DIR = Path("/tmp/Toggle-Trackpad")
 STATE_FILE = STATE_DIR / "trackpad_state.json"
@@ -75,14 +76,29 @@ class Plugin:
         
     async def activate(self):
         decky.logger.info("Desactivando trackpads...")
-        # subprocess.run(["python3", "/home/deck/homebrew/plugins/Toggle-Trackpad/backend/on.py"])
         modificar_vdf(VDF_PATH)
         await self.set_state(True)
         return {"status": "ok", "enabled": True}
 
     async def restore(self):
         decky.logger.info("Restaurar trackpads...")
-        # subprocess.run(["python3", "/home/deck/homebrew/plugins/Toggle-Trackpad/backend/off.py"])
         restaurar_vdf(VDF_PATH)
         await self.set_state(False)
         return {"status": "ok", "enabled": False}
+    
+    def detect_game_from_process():
+        game = {
+            "name": None,
+            "running": False,
+            "appid": None
+        }
+        try:
+            game_name = detect_game_from_process()
+            if game_name:
+                decky.logger.info(f"Juego detectado: {game_name}")
+                game["name"] = game_name
+            else:
+                decky.logger.info("No se detectó ningún juego en ejecución.")
+        except Exception as e:
+            decky.logger.error(f"Error al detectar juego desde proceso: {e}")
+        return game

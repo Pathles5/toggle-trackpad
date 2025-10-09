@@ -18,7 +18,7 @@ const PluginContent = () => {
           running: boolean;
           name: string | null;
           appid: number | null;
-        }>("get_running_game");
+        }>("detect_game_from_process");
         log(`Estado inicial del juego: ${JSON.stringify(game)}`);
         if (game.running) {
           log(`Juego activo: ${game.name} (AppID: ${game.appid}), Corriendo: ${game.running}`);
