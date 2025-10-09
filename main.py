@@ -1,8 +1,11 @@
-from backend.toggle import modificar_vdf, restaurar_vdf
+import sys
+import os
 import decky
 import subprocess
 import json
 from pathlib import Path
+sys.path.append(os.path.join(os.path.dirname(__file__), "backend"))
+from toggle import modificar_vdf, restaurar_vdf
 
 STATE_DIR = Path("/tmp/Toggle-Trackpad")
 STATE_FILE = STATE_DIR / "trackpad_state.json"
