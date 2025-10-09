@@ -88,6 +88,28 @@ const call = api.call;
 
 const PluginContent = () => {
     const [enabled, setEnabled] = SP_REACT.useState(false);
+    const [runningGame, setRunningGame] = SP_REACT.useState(null);
+    // Al montar el plugin, obtener estado del toggle y juego activo
+    SP_REACT.useEffect(() => {
+        const fetchInitialState = async () => {
+            try {
+                const state = await call("get_state");
+                setEnabled(state);
+                const game = await call("get_running_game");
+                if (game.running) {
+                    setRunningGame(`${game.name} (AppID: ${game.appid})`);
+                }
+                else {
+                    setRunningGame("Ningún juego en ejecución");
+                }
+            }
+            catch (error) {
+                console.error("Error al obtener estado inicial:", error);
+                setRunningGame("Error al consultar juego");
+            }
+        };
+        fetchInitialState();
+    }, []);
     SP_REACT.useEffect(() => {
         const fetchState = async () => {
             try {
@@ -133,6 +155,11 @@ const PluginContent = () => {
         }
     };
     return (window.SP_REACT.createElement(DFL.PanelSection, { title: "Opciones" },
+        window.SP_REACT.createElement(DFL.PanelSectionRow, null,
+            window.SP_REACT.createElement("div", null,
+                window.SP_REACT.createElement("strong", null, "Juego activo:"),
+                " ",
+                runningGame)),
         window.SP_REACT.createElement(DFL.PanelSectionRow, null,
             window.SP_REACT.createElement(DFL.ToggleField, { label: "Desactivar Trackpad", checked: enabled, onChange: handleToggle }))));
 };

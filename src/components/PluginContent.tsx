@@ -4,6 +4,33 @@ import { call } from "@decky/api";
 
 const PluginContent = () => {
   const [enabled, setEnabled] = useState(false);
+  const [runningGame, setRunningGame] = useState<string | null>(null);
+
+  // Al montar el plugin, obtener estado del toggle y juego activo
+  useEffect(() => {
+    const fetchInitialState = async () => {
+      try {
+        const state = await call<[], boolean>("get_state");
+        setEnabled(state);
+
+        const game = await call<[], {
+          running: boolean;
+          name: string | null;
+          appid: number | null;
+        }>("get_running_game");
+        if (game.running) {
+          setRunningGame(`${game.name} (AppID: ${game.appid})`);
+        } else {
+          setRunningGame("Ningún juego en ejecución");
+        }
+      } catch (error) {
+        console.error("Error al obtener estado inicial:", error);
+        setRunningGame("Error al consultar juego");
+      }
+    };
+
+    fetchInitialState();
+  }, []);
 
   useEffect(() => {
     const fetchState = async () => {
@@ -52,6 +79,11 @@ const PluginContent = () => {
 
   return (
     <PanelSection title="Opciones">
+      <PanelSectionRow>
+        <div>
+          <strong>Juego activo:</strong> {runningGame}
+        </div>
+      </PanelSectionRow>
       <PanelSectionRow>
         <ToggleField
           label="Desactivar Trackpad"

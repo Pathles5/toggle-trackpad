@@ -44,6 +44,31 @@ class Plugin:
         except Exception as e:
             decky.logger.error(f"Error al guardar el estado: {e}")
 
+    async def get_running_game(self):
+        try:
+            game = decky.steam.get_running_game()
+            if game:
+                decky.logger.info(f"Juego en ejecución: {game['display_name']} ({game['appid']})")
+                return {
+                    "running": True,
+                    "name": game["display_name"],
+                    "appid": game["appid"]
+                }
+            else:
+                decky.logger.info("No hay juego en ejecución")
+                return {
+                    "running": False,
+                    "name": None,
+                    "appid": None
+                }
+        except Exception as e:
+            decky.logger.error(f"Error al obtener juego activo: {e}")
+            return {
+                "running": False,
+                "name": None,
+                "appid": None
+            }
+        
     async def activate(self):
         decky.logger.info("Ejecutando on.py para desactivar trackpad...")
         subprocess.run(["python3", "/home/deck/homebrew/plugins/Toggle-Trackpad/backend/on.py"])
