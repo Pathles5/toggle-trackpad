@@ -92,7 +92,7 @@ const PluginContent = () => {
         console.log("Desactivando Trackpad...");
         // aquí tu lógica de encendido
         try {
-            await call("activate", { enable: true });
+            await call("activate", {});
             console.log("Trackpad Desactivado!");
         }
         catch (error) {
@@ -103,24 +103,25 @@ const PluginContent = () => {
         console.log("Restaurando Trackpads...");
         // aquí tu lógica de apagado
         try {
-            await call("restore", { enable: false });
+            await call("restore", {});
             console.log("Trackpads Restaurandos!!!");
         }
         catch (error) {
             console.error("Error al restaurar el trackpad:", error);
         }
     };
+    const handleToggle = (val) => {
+        setEnabled(val);
+        if (val) {
+            toggleOn();
+        }
+        else {
+            toggleOff();
+        }
+    };
     return (window.SP_REACT.createElement(DFL.PanelSection, { title: "Opciones" },
         window.SP_REACT.createElement(DFL.PanelSectionRow, null,
-            window.SP_REACT.createElement(DFL.ToggleField, { label: "Desactivar Trackpad", checked: enabled, onChange: (val) => {
-                    setEnabled(val);
-                    if (val) {
-                        toggleOn();
-                    }
-                    else {
-                        toggleOff();
-                    }
-                } }))));
+            window.SP_REACT.createElement(DFL.ToggleField, { label: "Desactivar Trackpad", checked: enabled, onChange: handleToggle }))));
 };
 
 var index = DFL.definePlugin(() => {
