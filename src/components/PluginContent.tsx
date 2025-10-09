@@ -9,7 +9,7 @@ const PluginContent = () => {
     console.log("Desactivando Trackpad...");
     // aquí tu lógica de encendido
     try {
-        await call("activate",{});
+        let result = await call("activate");
         console.log("Trackpad Desactivado!");
     } catch (error) {
         console.error("Error al deshabilitar el trackpad:", error);        
@@ -21,7 +21,7 @@ const toggleOff = async () => {
     console.log("Restaurando Trackpads...");
     // aquí tu lógica de apagado
     try {
-        await call("restore",{});
+        let result = await call("restore");
         console.log("Trackpads Restaurandos!!!");
     } catch (error) {
         console.error("Error al restaurar el trackpad:", error);        

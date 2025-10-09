@@ -3,6 +3,12 @@ import subprocess
 from decky_plugin import Plugin
 
 class Plugin:
+    async def _main(self):
+        decky_plugin.logger.info(" - - - - Framegen plugin loaded")
+
+    async def _unload(self):
+        decky_plugin.logger.info(" - - - - Framegen plugin unloaded.")
+
     async def activate(self):
         logging.info("Modificando preset...")
         print("Modificando preset...")
