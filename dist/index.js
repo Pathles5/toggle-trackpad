@@ -95,7 +95,7 @@ const PluginContent = () => {
             try {
                 const state = await call("get_state");
                 setEnabled(state);
-                const game = await call("get_running_game");
+                const game = await call("detect_game_from_process");
                 log(`Estado inicial del juego: ${JSON.stringify(game)}`);
                 if (game.running) {
                     log(`Juego activo: ${game.name} (AppID: ${game.appid}), Corriendo: ${game.running}`);
@@ -165,7 +165,7 @@ const PluginContent = () => {
         window.SP_REACT.createElement(DFL.PanelSectionRow, null,
             window.SP_REACT.createElement(DFL.ToggleField, { label: "Desactivar Trackpad", checked: enabled, onChange: handleToggle }))));
 };
-const log = (str) => console.log(`[Toggle Trackpad] ${str}`, "color: cyan, font-weight: bold");
+const log = (str) => console.log(`[Toggle Trackpad] ${str}`);
 
 var index = DFL.definePlugin(() => {
     return {

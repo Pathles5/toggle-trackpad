@@ -86,7 +86,7 @@ class Plugin:
         await self.set_state(False)
         return {"status": "ok", "enabled": False}
     
-    def detect_game_from_process():
+    async def detect_game_from_process():
         game = {
             "name": None,
             "running": False,
