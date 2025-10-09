@@ -1,4 +1,4 @@
-from .backend.toggle import modificar_vdf, restaurar_vdf
+from backend.toggle import modificar_vdf, restaurar_vdf
 import decky
 import subprocess
 import json
