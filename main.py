@@ -72,14 +72,18 @@ class Plugin:
             }
         
     async def activate(self):
-        decky.logger.info("Ejecutando on.py para desactivar trackpad...")
+        decky.logger.info("Desactivando trackpads...")
+        decky.logger.debug("Desactivando trackpads...")
+        decky.logger.warning("Desactivando trackpads...")
+        decky.logger.error("Desactivando trackpads...")
+        decky.logger.log("Desactivando trackpads...")
         # subprocess.run(["python3", "/home/deck/homebrew/plugins/Toggle-Trackpad/backend/on.py"])
         modificar_vdf(VDF_PATH)
         await self.set_state(True)
         return {"status": "ok", "enabled": True}
 
     async def restore(self):
-        decky.logger.info("Ejecutando off.py para restaurar trackpad...")
+        decky.logger.info("Restaurar trackpads...")
         # subprocess.run(["python3", "/home/deck/homebrew/plugins/Toggle-Trackpad/backend/off.py"])
         restaurar_vdf(VDF_PATH)
         await self.set_state(False)
