@@ -1,6 +1,6 @@
-from .utils import read_text, write_text, backup_file
-from .parseVdf import find_matching_brace
-from .logger import *
+from utils import read_text, write_text, backup_file
+from parseVdf import find_matching_brace
+from logger import *
 import re
 import os
 
