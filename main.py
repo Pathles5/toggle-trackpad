@@ -51,7 +51,10 @@ class Plugin:
 
     async def get_running_game(self):
         try:
-            game = decky.steam.get_running_game()
+            game =  {
+                    "display_name": "placeholder",
+                    "appid": "123123"
+                }
             if game:
                 decky.logger.info(f"Juego en ejecución: {game['display_name']} ({game['appid']})")
                 return {
@@ -76,10 +79,6 @@ class Plugin:
         
     async def activate(self):
         decky.logger.info("Desactivando trackpads...")
-        decky.logger.debug("Desactivando trackpads...")
-        decky.logger.warning("Desactivando trackpads...")
-        decky.logger.error("Desactivando trackpads...")
-        decky.logger.log("Desactivando trackpads...")
         # subprocess.run(["python3", "/home/deck/homebrew/plugins/Toggle-Trackpad/backend/on.py"])
         modificar_vdf(VDF_PATH)
         await self.set_state(True)

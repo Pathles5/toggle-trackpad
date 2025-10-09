@@ -1,6 +1,6 @@
-from .utils import read_text, write_text, backup_file
-from .parseVdf import find_matching_brace
-from .logger import *
+from utils import read_text, write_text, backup_file
+from parseVdf import find_matching_brace
+from logger import *
 import re
 import os
 
@@ -21,7 +21,7 @@ def duplicar_preset_default(texto: str) -> str:
     default_block = next((b for b in presets if re.search(r'"name"\s*"Default"', b)), None)
 
     if not default_block:
-        log("No se encontró preset 'Default'. Saltando duplicación.")
+        log_warn("No se encontró preset 'Default'. Saltando duplicación.")
         return texto
 
     log_info("Duplicando preset 'Default' como '__backup'...")
