@@ -8,7 +8,7 @@ const PluginContent = () => {
   useEffect(() => {
     const fetchState = async () => {
       try {
-        const state = await call<[],boolean>("get_state");
+        const state = await call<[], boolean>("get_state");
         setEnabled(state);
       } catch (error) {
         console.error("Error al obtener el estado:", error);
@@ -18,13 +18,28 @@ const PluginContent = () => {
   }, []);
 
   const toggleOn = async () => {
-    await call("activate");
-    setEnabled(true);
+    console.log("Desactivando Trackpad...");
+    // aquí tu lógica de encendido
+    try {
+      await call("activate");
+      setEnabled(true);
+      console.log("Trackpad Desactivado!");
+    } catch (error) {
+      console.error("Error al deshabilitar el trackpad:", error);
+    }
+
   };
 
   const toggleOff = async () => {
-    await call("restore");
-    setEnabled(false);
+    console.log("Restaurando Trackpads...");
+    // aquí tu lógica de apagado
+    try {
+      await call("restore");
+      setEnabled(false);
+      console.log("Trackpads Restaurandos!!!");
+    } catch (error) {
+      console.error("Error al restaurar el trackpad:", error);
+    }
   };
 
   const handleToggle = async (val: boolean) => {

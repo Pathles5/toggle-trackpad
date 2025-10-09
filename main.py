@@ -3,7 +3,8 @@ import subprocess
 import json
 from pathlib import Path
 
-STATE_FILE = Path("/tmp/Toggle-Trackpad/trackpad_state.json")
+STATE_DIR = Path("/tmp/Toggle-Trackpad")
+STATE_FILE = STATE_DIR / "trackpad_state.json"
 
 class Plugin:
     async def _main(self):
@@ -13,22 +14,35 @@ class Plugin:
         decky.logger.info("Toggle Trackpad plugin unloaded")
 
     async def get_state(self):
-        if STATE_FILE.exists():
-            try:
+        try:
+            if not STATE_DIR.exists():
+                STATE_DIR.mkdir(parents=True)
+                decky.logger.info(f"Directorio creado: {STATE_DIR}")
+
+            if STATE_FILE.exists():
                 with open(STATE_FILE, "r") as f:
                     data = json.load(f)
                     return data.get("enabled", False)
-            except Exception as e:
-                decky.logger.error(f"Error reading state file: {e}")
-        return False
+            else:
+                with open(STATE_FILE, "w") as f:
+                    json.dump({"enabled": False}, f)
+                decky.logger.info("Archivo de estado creado por primera vez")
+                return False
+        except Exception as e:
+            decky.logger.error(f"Error al leer o crear el archivo de estado: {e}")
+            return False
 
     async def set_state(self, enabled: bool):
         try:
+            if not STATE_DIR.exists():
+                STATE_DIR.mkdir(parents=True)
+                decky.logger.info(f"Directorio creado: {STATE_DIR}")
+
             with open(STATE_FILE, "w") as f:
                 json.dump({"enabled": enabled}, f)
-            decky.logger.info(f"Trackpad state saved: {enabled}")
+            decky.logger.info(f"Estado guardado: {enabled}")
         except Exception as e:
-            decky.logger.error(f"Error writing state file: {e}")
+            decky.logger.error(f"Error al guardar el estado: {e}")
 
     async def activate(self):
         decky.logger.info("Ejecutando on.py para desactivar trackpad...")
