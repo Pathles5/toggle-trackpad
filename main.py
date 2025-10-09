@@ -1,3 +1,4 @@
+from .backend.toggle import modificar_vdf, restaurar_vdf
 import decky
 import subprocess
 import json
@@ -5,6 +6,7 @@ from pathlib import Path
 
 STATE_DIR = Path("/tmp/Toggle-Trackpad")
 STATE_FILE = STATE_DIR / "trackpad_state.json"
+VDF_PATH = "/home/deck/.local/share/Steam/steamapps/common/Steam Controller Configs/312585954/config/668580/controller_neptune.vdf"
 
 class Plugin:
     async def _main(self):
@@ -71,12 +73,14 @@ class Plugin:
         
     async def activate(self):
         decky.logger.info("Ejecutando on.py para desactivar trackpad...")
-        subprocess.run(["python3", "/home/deck/homebrew/plugins/Toggle-Trackpad/backend/on.py"])
+        # subprocess.run(["python3", "/home/deck/homebrew/plugins/Toggle-Trackpad/backend/on.py"])
+        modificar_vdf(VDF_PATH)
         await self.set_state(True)
         return {"status": "ok", "enabled": True}
 
     async def restore(self):
         decky.logger.info("Ejecutando off.py para restaurar trackpad...")
-        subprocess.run(["python3", "/home/deck/homebrew/plugins/Toggle-Trackpad/backend/off.py"])
+        # subprocess.run(["python3", "/home/deck/homebrew/plugins/Toggle-Trackpad/backend/off.py"])
+        restaurar_vdf(VDF_PATH)
         await self.set_state(False)
         return {"status": "ok", "enabled": False}
