@@ -88,35 +88,32 @@ const call = api.call;
 
 const PluginContent = () => {
     const [enabled, setEnabled] = SP_REACT.useState(false);
+    SP_REACT.useEffect(() => {
+        const fetchState = async () => {
+            try {
+                const state = await call("get_state");
+                setEnabled(state);
+            }
+            catch (error) {
+                console.error("Error al obtener el estado:", error);
+            }
+        };
+        fetchState();
+    }, []);
     const toggleOn = async () => {
-        console.log("Desactivando Trackpad...");
-        // aquí tu lógica de encendido
-        try {
-            await call("activate");
-            console.log("Trackpad Desactivado!");
-        }
-        catch (error) {
-            console.error("Error al deshabilitar el trackpad:", error);
-        }
+        await call("activate");
+        setEnabled(true);
     };
     const toggleOff = async () => {
-        console.log("Restaurando Trackpads...");
-        // aquí tu lógica de apagado
-        try {
-            await call("restore");
-            console.log("Trackpads Restaurandos!!!");
-        }
-        catch (error) {
-            console.error("Error al restaurar el trackpad:", error);
-        }
+        await call("restore");
+        setEnabled(false);
     };
-    const handleToggle = (val) => {
-        setEnabled(val);
+    const handleToggle = async (val) => {
         if (val) {
-            toggleOn();
+            await toggleOn();
         }
         else {
-            toggleOff();
+            await toggleOff();
         }
     };
     return (window.SP_REACT.createElement(DFL.PanelSection, { title: "Opciones" },
