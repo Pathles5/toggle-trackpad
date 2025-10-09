@@ -165,7 +165,7 @@ const PluginContent = () => {
         window.SP_REACT.createElement(DFL.PanelSectionRow, null,
             window.SP_REACT.createElement(DFL.ToggleField, { label: "Desactivar Trackpad", checked: enabled, onChange: handleToggle }))));
 };
-const log = (str) => console.log(`[Toggle Trackpad] ${str}`);
+const log = (str) => console.log(`[Toggle Trackpad] ${str}`, "color: cyan, font-weight: bold");
 
 var index = DFL.definePlugin(() => {
     return {

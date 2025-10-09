@@ -98,6 +98,6 @@ const PluginContent = () => {
   );
 };
 
-const log = (str: String) => console.log(`[Toggle Trackpad] ${str}`);
+const log = (str: String) => console.log(`[Toggle Trackpad] ${str}`,"color: cyan, font-weight: bold");
 
 export default PluginContent;
