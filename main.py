@@ -5,7 +5,8 @@ import json
 from pathlib import Path
 sys.path.append(os.path.join(os.path.dirname(__file__), "backend"))
 from toggle import modificar_vdf, restaurar_vdf
-from utils import detect_game_from_process
+from utils import detect_game_from_process,printDeckyConstants
+import re
 
 STATE_DIR = Path("/tmp/Toggle-Trackpad")
 STATE_FILE = STATE_DIR / "trackpad_state.json"
@@ -21,7 +22,7 @@ class Plugin:
     async def get_state(self):
         try:
             os.makedirs(STATE_DIR, exist_ok=True)
-
+            printDeckyConstants() 
             if STATE_FILE.exists():
                 with open(STATE_FILE, "r") as f:
                     data = json.load(f)
