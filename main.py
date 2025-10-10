@@ -1,6 +1,11 @@
+import os, sys
 import decky
 from pathlib import Path
 
+import sys, os
+sys.path.append(os.path.join(os.path.dirname(__file__), "backend/src"))
+
+# sys.path.append(os.path.join(base_dir, "backend/models"))
 from toggle import modify_vdf, restore_vdf
 from game import get_running_game
 from utils import load_game_config, save_game_config
@@ -10,22 +15,12 @@ GAME_DIR = STATE_DIR / "games"
 VDF_PATH = "/home/deck/.local/share/Steam/steamapps/common/Steam Controller Configs/312585954/config/668580/controller_neptune.vdf"
 
 class Plugin:
-    # Asyncio-compatible long-running code, executed in a task when the plugin is loaded
     async def _main(self):
         decky.logger.info("Toggle Trackpad plugin loaded")
 
-    # Function called first during the unload process, utilize this to handle your plugin being stopped, but not
-    # completely removed
     async def _unload(self):
         decky.logger.info("Toggle Trackpad plugin unloaded")
-        pass
 
-    # Function called after `_unload` during uninstall, utilize this to clean up processes and other remnants of your
-    # plugin that may remain on the system
-    async def _uninstall(self):
-        decky.logger.info("Goodbye World!")
-        pass
-    
     async def get_state(self):
         game = get_running_game()
         if not game or not game["appid"]:
