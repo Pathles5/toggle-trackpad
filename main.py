@@ -5,6 +5,7 @@ from pathlib import Path
 
 base_dir = os.path.dirname(__file__)
 sys.path.append(os.path.join(base_dir, "backend"))
+sys.path.append(os.path.join(base_dir, "models"))
 from toggle import modify_vdf, restore_vdf
 from game import get_running_game
 from utils import load_game_config, save_game_config
