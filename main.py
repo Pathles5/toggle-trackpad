@@ -49,18 +49,6 @@ class Plugin:
         except Exception as e:
             decky.logger.error(f"Error saving state: {e}")
 
-    # async def get_running_game(self):
-    #     try:
-    #         game = get_running_game()
-    #         if game["appid"]:
-    #             decky.logger.info(f"Detected game: {game['name']} (AppID: {game['appid']})")
-    #         else:
-    #             decky.logger.info("No running game detected.")
-    #         return game
-    #     except Exception as e:
-    #         decky.logger.error(f"Error detecting game: {e}")
-    #         return {"appid": None, "name": None, "running": False}
-
     async def activate(self):
         decky.logger.info("Disabling trackpads...")
         modify_vdf(VDF_PATH)
@@ -74,18 +62,11 @@ class Plugin:
         return {"status": "ok", "enabled": False}
     
     async def detect_game(self):
-        game = {
-            "name": None,
-            "running": False,
-            "appid": None
-        }
         decky.logger.info("Checking for a running game...")
-
         try:
-            game_name = get_running_game()
-            if game_name:
-                decky.logger.info(f"Detected game: {game_name}")
-                game["name"] = game_name
+            game = get_running_game()
+            if game:
+                decky.logger.info(f"Detected game: {game}")
             else:
                 decky.logger.info("No running game detected.")
         except Exception as e:
