@@ -4,8 +4,8 @@ import decky
 import json
 from pathlib import Path
 sys.path.append(os.path.join(os.path.dirname(__file__), "backend"))
-from toggle import modificar_vdf, restaurar_vdf
-from game import detect_game
+from toggle import modify_vdf, restore_vdf
+from game import get_running_game
 import re
 
 STATE_DIR = Path("/tmp/Toggle-Trackpad")
@@ -21,7 +21,7 @@ class Plugin:
 
     async def get_state(self):
         try:
-            decky.logger.info(f"Comprobando el estado del archivo: {STATE_FILE}")
+            decky.logger.info(f"Checking state file: {STATE_FILE}")
             os.makedirs(STATE_DIR, exist_ok=True)
             if STATE_FILE.exists():
                 with open(STATE_FILE, "r") as f:
@@ -30,15 +30,14 @@ class Plugin:
             else:
                 with open(STATE_FILE, "w") as f:
                     json.dump({"enabled": False}, f)
-                decky.logger.info("Archivo de estado creado por primera vez")
+                decky.logger.info("State file created for the first time")
                 return False
         except Exception as e:
-            decky.logger.error(f"Error al leer o crear el archivo de estado: {e}")
+            decky.logger.error(f"Error reading or creating the state file: {e}")
             return False
         except Exception as e:
-            decky.logger.error(f"Error al leer o crear el archivo de estado: {e}")
+            decky.logger.error(f"Error reading or creating the state file: {e}")
             return False
-
 
     async def set_state(self, enabled: bool):
         try:
@@ -46,29 +45,31 @@ class Plugin:
 
             with open(STATE_FILE, "w") as f:
                 json.dump({"enabled": enabled}, f)
-            decky.logger.info(f"Estado guardado: {enabled}")
+            decky.logger.info(f"State saved: {enabled}")
         except Exception as e:
-            decky.logger.error(f"Error al guardar el estado: {e}")
-    async def get_running_game(self):
-        try:
-            game = detect_game()
-            if game["appid"]:
-                decky.logger.info(f"Juego detectado: {game['name']} (AppID: {game['appid']})")
-            else:
-                decky.logger.info("No se detectó ningún juego en ejecución.")
-            return game
-        except Exception as e:
-            decky.logger.error(f"Error al detectar juego: {e}")
-            return {"appid": None, "name": None, "running": False}
+            decky.logger.error(f"Error saving state: {e}")
+
+    # async def get_running_game(self):
+    #     try:
+    #         game = get_running_game()
+    #         if game["appid"]:
+    #             decky.logger.info(f"Detected game: {game['name']} (AppID: {game['appid']})")
+    #         else:
+    #             decky.logger.info("No running game detected.")
+    #         return game
+    #     except Exception as e:
+    #         decky.logger.error(f"Error detecting game: {e}")
+    #         return {"appid": None, "name": None, "running": False}
+
     async def activate(self):
-        decky.logger.info("Desactivando trackpads...")
-        modificar_vdf(VDF_PATH)
+        decky.logger.info("Disabling trackpads...")
+        modify_vdf(VDF_PATH)
         await self.set_state(True)
         return {"status": "ok", "enabled": True}
 
     async def restore(self):
-        decky.logger.info("Restaurar trackpads...")
-        restaurar_vdf(VDF_PATH)
+        decky.logger.info("Restoring trackpads...")
+        restore_vdf(VDF_PATH)
         await self.set_state(False)
         return {"status": "ok", "enabled": False}
     
@@ -78,15 +79,15 @@ class Plugin:
             "running": False,
             "appid": None
         }
-        decky.logger.info("ESTAMOS MIRANDO A VER QUE JUEGUITO!")
+        decky.logger.info("Checking for a running game...")
 
         try:
-            game_name = detect_game_from_process()
+            game_name = get_running_game()
             if game_name:
-                decky.logger.info(f"Juego detectado: {game_name}")
+                decky.logger.info(f"Detected game: {game_name}")
                 game["name"] = game_name
             else:
-                decky.logger.info("No se detectó ningún juego en ejecución.")
+                decky.logger.info("No running game detected.")
         except Exception as e:
-            decky.logger.error(f"Error al detectar juego desde proceso: {e}")
+            decky.logger.error(f"Error detecting game from process: {e}")
         return game

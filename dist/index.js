@@ -97,48 +97,48 @@ const PluginContent = () => {
                     call("detect_game")
                 ]);
                 setEnabled(state);
-                log(`Estado inicial del juego: ${JSON.stringify(game)}`);
+                log(`Initial game state: ${JSON.stringify(game)}`);
                 if (game.running) {
-                    log(`Juego activo: ${game.name} (AppID: ${game.appid})`);
+                    log(`Active game: ${game.name} (AppID: ${game.appid})`);
                     if (game.appid) {
                         setRunningGame(`${game.name} (AppID: ${game.appid})`);
                     }
                     else {
-                        log("Juego activo pero no identificado correctamente");
-                        setRunningGame("Juego activo no identificado correctamente");
+                        log("Game is running but not correctly identified");
+                        setRunningGame("Game running but not correctly identified");
                     }
                 }
                 else {
-                    setRunningGame("Ningún juego en ejecución");
+                    setRunningGame("No game running");
                 }
             }
             catch (error) {
-                console.error("Error al obtener estado inicial:", error);
-                setRunningGame("Error al consultar juego");
+                console.error("Error fetching initial state:", error);
+                setRunningGame("Error querying game");
             }
         };
         fetchInitialData();
     }, []);
     const toggleOn = async () => {
-        log("Desactivando Trackpad...");
+        log("Disabling trackpad...");
         try {
             await call("activate");
             setEnabled(true);
-            log("Trackpad Desactivado!");
+            log("Trackpad disabled!");
         }
         catch (error) {
-            console.error("Error al deshabilitar el trackpad:", error);
+            console.error("Error disabling the trackpad:", error);
         }
     };
     const toggleOff = async () => {
-        log("Restaurando Trackpads...");
+        log("Restoring trackpads...");
         try {
             await call("restore");
             setEnabled(false);
-            log("Trackpads Restaurados!!!");
+            log("Trackpads restored!");
         }
         catch (error) {
-            console.error("Error al restaurar el trackpad:", error);
+            console.error("Error restoring the trackpad:", error);
         }
     };
     const handleToggle = async (val) => {
@@ -149,14 +149,14 @@ const PluginContent = () => {
             await toggleOff();
         }
     };
-    return (window.SP_REACT.createElement(DFL.PanelSection, { title: "Opciones" },
+    return (window.SP_REACT.createElement(DFL.PanelSection, { title: "Options" },
         window.SP_REACT.createElement(DFL.PanelSectionRow, null,
             window.SP_REACT.createElement("div", null,
-                window.SP_REACT.createElement("strong", null, "Juego activo:"),
+                window.SP_REACT.createElement("strong", null, "Active game:"),
                 " ",
                 runningGame)),
         window.SP_REACT.createElement(DFL.PanelSectionRow, null,
-            window.SP_REACT.createElement(DFL.ToggleField, { label: "Desactivar Trackpad", checked: enabled, onChange: handleToggle }))));
+            window.SP_REACT.createElement(DFL.ToggleField, { label: "Disable Trackpad", checked: enabled, onChange: handleToggle }))));
 };
 const log = (str) => console.log(`[Toggle Trackpad] ${str}`);
 

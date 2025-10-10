@@ -8,4 +8,4 @@ def find_matching_brace(text: str, open_index: int) -> int:
             depth -= 1
             if depth == 0:
                 return i
-    raise ValueError("No se encontró cierre de bloque '}'")
+    raise ValueError("No matching closing brace '}' found")
