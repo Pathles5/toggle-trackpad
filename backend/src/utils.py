@@ -5,7 +5,7 @@ import difflib
 from datetime import datetime
 from typing import Optional, List, Dict
 
-from .models.GameConfig import *
+from GameConfig import GameConfig
 
 GAME_DIR = "/tmp/Toggle-Trackpad/games"
 

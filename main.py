@@ -3,7 +3,6 @@ import decky
 from pathlib import Path
 
 sys.path.append(os.path.join(os.path.dirname(__file__), "backend/src"))
-# sys.path.append(os.path.join(base_dir, "backend/src/models"))
 from toggle import modify_vdf, restore_vdf
 from game import get_running_game
 from utils import load_game_config, save_game_config
