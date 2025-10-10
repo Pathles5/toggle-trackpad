@@ -4,12 +4,15 @@ import decky
 import json
 from pathlib import Path
 sys.path.append(os.path.join(os.path.dirname(__file__), "backend"))
+
 from toggle import modify_vdf, restore_vdf
 from game import get_running_game
-import re
+from utils import load_game_config, save_game_config
+from models.GameConfig import GameConfig
+from datetime import datetime
 
 STATE_DIR = Path("/tmp/Toggle-Trackpad")
-STATE_FILE = STATE_DIR / "trackpad_state.json"
+GAME_DIR = STATE_DIR / "games"
 VDF_PATH = "/home/deck/.local/share/Steam/steamapps/common/Steam Controller Configs/312585954/config/668580/controller_neptune.vdf"
 
 class Plugin:
@@ -20,34 +23,31 @@ class Plugin:
         decky.logger.info("Toggle Trackpad plugin unloaded")
 
     async def get_state(self):
-        try:
-            decky.logger.info(f"Checking state file: {STATE_FILE}")
-            os.makedirs(STATE_DIR, exist_ok=True)
-            if STATE_FILE.exists():
-                with open(STATE_FILE, "r") as f:
-                    data = json.load(f)
-                    return data.get("enabled", False)
-            else:
-                with open(STATE_FILE, "w") as f:
-                    json.dump({"enabled": False}, f)
-                decky.logger.info("State file created for the first time")
-                return False
-        except Exception as e:
-            decky.logger.error(f"Error reading or creating the state file: {e}")
+        game = get_running_game()
+        if not game or not game["appid"]:
+            decky.logger.warning("No game running or AppID missing")
             return False
-        except Exception as e:
-            decky.logger.error(f"Error reading or creating the state file: {e}")
+
+        config = load_game_config(str(game["appid"]))
+        if config:
+            decky.logger.info(f"Loaded config for {game['name']}: trackpad_disabled={config['trackpad_disabled']}")
+            return config["trackpad_disabled"]
+        else:
+            decky.logger.info(f"No config found for {game['name']}, defaulting to False")
             return False
 
     async def set_state(self, enabled: bool):
-        try:
-            os.makedirs(STATE_DIR, exist_ok=True)
+        game = get_running_game()
+        if not game or not game["appid"]:
+            decky.logger.warning("No game running or AppID missing")
+            return
 
-            with open(STATE_FILE, "w") as f:
-                json.dump({"enabled": enabled}, f)
-            decky.logger.info(f"State saved: {enabled}")
-        except Exception as e:
-            decky.logger.error(f"Error saving state: {e}")
+        save_game_config(
+            appid=str(game["appid"]),
+            name=game["name"],
+            trackpad_disabled=enabled
+        )
+        decky.logger.info(f"Saved config for {game['name']}: trackpad_disabled={enabled}")
 
     async def activate(self):
         decky.logger.info("Disabling trackpads...")
@@ -60,7 +60,7 @@ class Plugin:
         restore_vdf(VDF_PATH)
         await self.set_state(False)
         return {"status": "ok", "enabled": False}
-    
+
     async def detect_game(self):
         decky.logger.info("Checking for a running game...")
         try:
