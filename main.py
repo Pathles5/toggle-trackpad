@@ -5,7 +5,8 @@ import json
 from pathlib import Path
 sys.path.append(os.path.join(os.path.dirname(__file__), "backend"))
 from toggle import modificar_vdf, restaurar_vdf
-from utils import detect_game_from_process,printDeckyConstants
+from utils import detect_game_from_process
+from debug import printDeckyConstants
 import re
 
 STATE_DIR = Path("/tmp/Toggle-Trackpad")
