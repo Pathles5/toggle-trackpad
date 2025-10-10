@@ -1,13 +1,11 @@
 import os
-import sys
 import decky
 import shutil
 import difflib
 from datetime import datetime
 from typing import Optional, List, Dict
 
-# from GameConfig import GameConfig
-
+from .models.GameConfig import *
 
 GAME_DIR = "/tmp/Toggle-Trackpad/games"
 
