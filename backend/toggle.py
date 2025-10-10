@@ -1,8 +1,8 @@
-from utils import read_text, write_text, backup_file
-from parseVdf import find_matching_brace
-import decky
 import re
 import os
+import decky
+from parseVdf import find_matching_brace
+from utils import read_text, write_text, backup_file
 
 def extract_presets(text: str):
     pattern = r'"preset"\s*\{[^{}]*(?:\{[^{}]*\}[^{}]*)*\}'

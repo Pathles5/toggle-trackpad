@@ -4,7 +4,7 @@ import difflib
 import json
 from typing import Optional, List, Dict
 from datetime import datetime
-from models.GameConfig import GameConfig
+from .models.GameConfig import GameConfig
 import decky
 
 GAME_DIR = "/tmp/Toggle-Trackpad/games"

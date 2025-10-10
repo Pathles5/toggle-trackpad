@@ -7,7 +7,6 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "backend"))
 from toggle import modify_vdf, restore_vdf
 from game import get_running_game
 from utils import load_game_config, save_game_config
-from datetime import datetime
 
 STATE_DIR = Path("/tmp/Toggle-Trackpad")
 GAME_DIR = STATE_DIR / "games"
