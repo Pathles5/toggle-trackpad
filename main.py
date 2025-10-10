@@ -22,6 +22,7 @@ class Plugin:
 
     async def get_state(self):
         try:
+            decky.logger.info(f"Comprobando el estado del archivo: {STATE_FILE}")
             os.makedirs(STATE_DIR, exist_ok=True)
             printDeckyConstants() 
             if STATE_FILE.exists():
