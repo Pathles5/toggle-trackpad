@@ -4,11 +4,11 @@ import decky
 from pathlib import Path
 
 base_dir = os.path.dirname(__file__)
-sys.path.append(os.path.join(base_dir, "backend"))
+# sys.path.append(os.path.join(base_dir, "backend"))
 # sys.path.append(os.path.join(base_dir, "backend/models"))
-from toggle import modify_vdf, restore_vdf
-from game import get_running_game
-from utils import load_game_config, save_game_config
+from backend.toggle import modify_vdf, restore_vdf
+from backend.game import get_running_game
+from backend.utils import load_game_config, save_game_config
 
 STATE_DIR = Path("/tmp/Toggle-Trackpad")
 GAME_DIR = STATE_DIR / "games"
