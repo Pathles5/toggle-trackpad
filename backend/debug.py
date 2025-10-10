@@ -1,23 +1,17 @@
 import decky
 
 def printDeckyConstants():
-    try:
-        pyi_path = getattr(decky, "__file__", None)
-        if pyi_path and pyi_path.endswith(".pyi"):
-            with open(pyi_path, "r", encoding="utf-8") as f:
-                contents = f.read()
-            const_names = re.findall(r'^\s*([A-Z][A-Z0-9_]+)\s*[:=]', contents, flags=re.M)
-            seen = set()
-            for name in const_names:
-                if name in seen:
-                    continue
-                seen.add(name)
-                try:
-                    value = getattr(decky, name)
-                except Exception:
-                    value = "<no attribute>"
-                decky.logger.info(f"{name}: {value}")
-        else:
-            decky.logger.info("No se encontró un archivo .pyi para decky")
-    except Exception as e:
-        decky.logger.error(f"Error al listar constantes de decky.pyi: {e}")
+    decky.logger.info(f"HOME: {decky.HOME}")
+    decky.logger.info(f"USER: {decky.USER}")
+    decky.logger.info(f"DECKY_VERSION: {decky.DECKY_VERSION}")
+    decky.logger.info(f"DECKY_USER: {decky.DECKY_USER}")
+    decky.logger.info(f"DECKY_USER_HOME: {decky.DECKY_USER_HOME}")
+    decky.logger.info(f"DECKY_HOME: {decky.DECKY_HOME}")
+    decky.logger.info(f"DECKY_PLUGIN_SETTINGS_DIR: {decky.DECKY_PLUGIN_SETTINGS_DIR}")
+    decky.logger.info(f"DECKY_PLUGIN_RUNTIME_DIR: {decky.DECKY_PLUGIN_RUNTIME_DIR}")
+    decky.logger.info(f"DECKY_PLUGIN_LOG_DIR: {decky.DECKY_PLUGIN_LOG_DIR}")
+    decky.logger.info(f"DECKY_PLUGIN_DIR: {decky.DECKY_PLUGIN_DIR}")
+    decky.logger.info(f"DECKY_PLUGIN_NAME: {decky.DECKY_PLUGIN_NAME}")
+    decky.logger.info(f"DECKY_PLUGIN_VERSION: {decky.DECKY_PLUGIN_VERSION}")
+    decky.logger.info(f"DECKY_PLUGIN_AUTHOR: {decky.DECKY_PLUGIN_AUTHOR}")
+    decky.logger.info(f"DECKY_PLUGIN_LOG: {decky.DECKY_PLUGIN_LOG}")
