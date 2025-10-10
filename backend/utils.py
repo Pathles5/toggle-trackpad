@@ -1,10 +1,14 @@
 import os
+import sys
 import decky
 import shutil
 import difflib
 from datetime import datetime
 from typing import Optional, List, Dict
-from .models.GameConfig import GameConfig
+
+base_dir = os.path.dirname(__file__)
+sys.path.append(os.path.join(base_dir, "models"))
+from GameConfig import GameConfig
 
 
 GAME_DIR = "/tmp/Toggle-Trackpad/games"
