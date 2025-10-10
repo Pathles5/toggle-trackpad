@@ -5,7 +5,7 @@ import difflib
 from datetime import datetime
 from typing import Optional, List, Dict
 
-from GameConfig import GameConfig
+from modules.GameConfig import GameConfig
 
 GAME_DIR = "/tmp/Toggle-Trackpad/games"
 
@@ -95,8 +95,8 @@ def get_game_file(appid: str) -> str:
     """
     return os.path.join(GAME_DIR, f"{appid}.json")
 
-# def load_game_config(appid: str) -> Optional[GameConfig]:
-def load_game_config(appid: str):
+def load_game_config(appid: str) -> Optional[GameConfig]:
+# def load_game_config(appid: str):
     """
     Loads a game's configuration from disk.
 
@@ -110,8 +110,8 @@ def load_game_config(appid: str):
     if os.path.exists(path):
         try:
             with open(path, "r") as f:
-                # return GameConfig.from_json(f.read())
-                return None
+                return GameConfig.from_json(f.read())
+                # return None
         except Exception as e:
             decky.logger.error(f"[ERROR] Failed to load game config for {appid}: {e}")
     return None
@@ -128,13 +128,13 @@ def save_game_config(appid: str, name: str, trackpad_disabled: bool):
     try:
         os.makedirs(GAME_DIR, exist_ok=True)
         path = get_game_file(appid)
-        # config = GameConfig(
-        #     appid=int(appid),
-        #     name=name,
-        #     trackpad_disabled=trackpad_disabled,
-        #     last_seen=datetime.now().isoformat()
-        # )
-        config = None
+        config = GameConfig(
+            appid=int(appid),
+            name=name,
+            trackpad_disabled=trackpad_disabled,
+            last_seen=datetime.now().isoformat()
+        )
+        # config = None
         with open(path, "w") as f:
             f.write(config.to_json())
         decky.logger.info(f"[STATE] Saved config for AppID {appid}")

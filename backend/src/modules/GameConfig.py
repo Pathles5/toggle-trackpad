@@ -9,15 +9,6 @@ class GameConfig:
     trackpad_disabled: bool
     last_seen: Optional[str] = None
 
-    def __init__(self, appid, name, trackpad_disabled, last_seen=None):
-        self.appid = appid
-        self.name = name
-        self.trackpad_disabled = trackpad_disabled
-        self.last_seen = last_seen
-
-    def __str__(self):
-        return self.name
-    
     def to_dict(self) -> dict:
         return asdict(self)
 
