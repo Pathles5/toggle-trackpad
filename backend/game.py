@@ -27,7 +27,7 @@ def load_cache():
         try:
             with open(CACHE_FILE, "r") as f:
                 return json.load(f)
-        except:
+        except Exception as e:
             decky.logger.error(f"[ERROR] al cargar cache: {e}")
             return {}
     return {}
@@ -37,25 +37,27 @@ def save_cache(cache):
         os.makedirs(os.path.dirname(CACHE_FILE), exist_ok=True)
         with open(CACHE_FILE, "w") as f:
             json.dump(cache, f)
-            decky.logger.info("[CACHE] Guardado exitoso")
+        decky.logger.info("[CACHE] Guardado exitoso")
     except Exception as e:
         decky.logger.error(f"[ERROR] al guardar cache: {e}")
 
-def get_appid_from_steam(game_name):
+def get_appid_from_gamedb(game_name):
     try:
-        decky.logger.info(f"[STEAM] Buscando AppID para: {game_name}")
-        response = requests.get("https://api.steampowered.com/ISteamApps/GetAppList/v2/")
-        data = response.json()
-        for app in data["applist"]["apps"]:
-            if game_name.lower() in app["name"].lower():
-                decky.logger.info(f"[STEAM] Coincidencia encontrada: {app['name']} (AppID: {app['appid']})")
-                return app["appid"], app["name"]
-        decky.logger.info("[STEAM] No se encontró AppID en la lista")
+        decky.logger.info(f"[GameDB] Buscando AppID para: {game_name}")
+        url = f"https://steam.watercollector.icu/search?q={game_name}"
+        response = requests.get(url, timeout=10)
+        response.raise_for_status()
+        results = response.json()
+        if results:
+            match = results[0]
+            decky.logger.info(f"[GameDB] Coincidencia: {match['name']} (AppID: {match['id']})")
+            return match["id"], match["name"]
+        decky.logger.info("[GameDB] No se encontró coincidencia")
     except Exception as e:
-        decky.logger.error(f"[ERROR] get_appid_from_steam: {e}")
+        decky.logger.error(f"[ERROR] GameDB API: {e}")
     return None, None
 
-def detect_game():
+def get_running_game():
     game_name = detect_game_from_process()
     if not game_name:
         return {
@@ -73,7 +75,7 @@ def detect_game():
             "running": True
         }
 
-    appid, official_name = get_appid_from_steam(game_name)
+    appid, official_name = get_appid_from_gamedb(game_name)
     if appid:
         cache[game_name] = {"appid": appid, "name": official_name}
         save_cache(cache)
@@ -83,7 +85,7 @@ def detect_game():
             "running": True
         }
 
-    decky.logger.warning(f"[GAME] Juego detectado pero no identificado correctamente: {game_name}")
+    decky.logger.warn(f"[GAME] Juego detectado pero no identificado correctamente: {game_name}")
     return {
         "appid": None,
         "name": "Juego no identificado correctamente",

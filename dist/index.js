@@ -99,8 +99,8 @@ const PluginContent = () => {
                 setEnabled(state);
                 log(`Estado inicial del juego: ${JSON.stringify(game)}`);
                 if (game.running) {
+                    log(`Juego activo: ${game.name} (AppID: ${game.appid})`);
                     if (game.appid) {
-                        log(`Juego activo: ${game.name} (AppID: ${game.appid})`);
                         setRunningGame(`${game.name} (AppID: ${game.appid})`);
                     }
                     else {
