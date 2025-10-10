@@ -20,9 +20,7 @@ class Plugin:
 
     async def get_state(self):
         try:
-            if not STATE_DIR.exists():
-                STATE_DIR.mkdir(parents=True)
-                decky.logger.info(f"Directorio creado: {STATE_DIR}")
+            os.makedirs(STATE_DIR, exist_ok=True)
 
             if STATE_FILE.exists():
                 with open(STATE_FILE, "r") as f:
@@ -36,19 +34,20 @@ class Plugin:
         except Exception as e:
             decky.logger.error(f"Error al leer o crear el archivo de estado: {e}")
             return False
+        except Exception as e:
+            decky.logger.error(f"Error al leer o crear el archivo de estado: {e}")
+            return False
+
 
     async def set_state(self, enabled: bool):
         try:
-            if not STATE_DIR.exists():
-                STATE_DIR.mkdir(parents=True)
-                decky.logger.info(f"Directorio creado: {STATE_DIR}")
+            os.makedirs(STATE_DIR, exist_ok=True)
 
             with open(STATE_FILE, "w") as f:
                 json.dump({"enabled": enabled}, f)
             decky.logger.info(f"Estado guardado: {enabled}")
         except Exception as e:
             decky.logger.error(f"Error al guardar el estado: {e}")
-
     async def get_running_game(self):
         try:
             game =  None
@@ -86,12 +85,14 @@ class Plugin:
         await self.set_state(False)
         return {"status": "ok", "enabled": False}
     
-    async def detect_game_from_process(self):
+    async def detect_game(self):
         game = {
             "name": None,
             "running": False,
             "appid": None
         }
+        decky.logger.info("ESTAMOS MIRANDO A VER QUE JUEGUITO!")
+
         try:
             game_name = detect_game_from_process()
             if game_name:

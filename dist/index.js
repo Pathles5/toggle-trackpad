@@ -89,13 +89,14 @@ const call = api.call;
 const PluginContent = () => {
     const [enabled, setEnabled] = SP_REACT.useState(false);
     const [runningGame, setRunningGame] = SP_REACT.useState(null);
-    // Al montar el plugin, obtener estado del toggle y juego activo
     SP_REACT.useEffect(() => {
-        const fetchInitialState = async () => {
+        const fetchInitialData = async () => {
             try {
-                const state = await call("get_state");
+                const [state, game] = await Promise.all([
+                    call("get_state"),
+                    call("detect_game")
+                ]);
                 setEnabled(state);
-                const game = await call("detect_game_from_process");
                 log(`Estado inicial del juego: ${JSON.stringify(game)}`);
                 if (game.running) {
                     log(`Juego activo: ${game.name} (AppID: ${game.appid}), Corriendo: ${game.running}`);
@@ -110,23 +111,10 @@ const PluginContent = () => {
                 setRunningGame("Error al consultar juego");
             }
         };
-        fetchInitialState();
-    }, []);
-    SP_REACT.useEffect(() => {
-        const fetchState = async () => {
-            try {
-                const state = await call("get_state");
-                setEnabled(state);
-            }
-            catch (error) {
-                console.error("Error al obtener el estado:", error);
-            }
-        };
-        fetchState();
+        fetchInitialData();
     }, []);
     const toggleOn = async () => {
         log("Desactivando Trackpad...");
-        // aquí tu lógica de encendido
         try {
             await call("activate");
             setEnabled(true);
@@ -138,11 +126,10 @@ const PluginContent = () => {
     };
     const toggleOff = async () => {
         log("Restaurando Trackpads...");
-        // aquí tu lógica de apagado
         try {
             await call("restore");
             setEnabled(false);
-            log("Trackpads Restaurandos!!!");
+            log("Trackpads Restaurados!!!");
         }
         catch (error) {
             console.error("Error al restaurar el trackpad:", error);
