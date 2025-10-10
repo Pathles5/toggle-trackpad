@@ -36,12 +36,11 @@ def get_appid_from_gamedb(game_name):
             best = find_most_similar(game_name, results)
             if best:
                 decky.logger.info(f"[GameDB] Best match: {best['name']} (AppID: {best['id']})")
-                return best["id"], best["name"]
-
+                return best["id"]
         decky.logger.info("[GameDB] No match found")
     except Exception as e:
         decky.logger.error(f"[ERROR] GameDB API: {e}")
-    return None, None
+    return None
 
 def get_running_game():
     game_name = detect_game_from_process()
@@ -60,12 +59,12 @@ def get_running_game():
             "running": True
         }
 
-    appid, official_name = get_appid_from_gamedb(game_name)
+    appid = get_appid_from_gamedb(game_name)
     if appid:
-        save_game_config(official_name, str(appid), trackpad_disabled=False)
+        save_game_config(game_name, str(appid), trackpad_disabled=False)
         return {
             "appid": appid,
-            "name": official_name,
+            "name": game_name,
             "running": True
         }
 
