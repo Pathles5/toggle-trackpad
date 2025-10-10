@@ -5,8 +5,7 @@ import json
 from pathlib import Path
 sys.path.append(os.path.join(os.path.dirname(__file__), "backend"))
 from toggle import modificar_vdf, restaurar_vdf
-from utils import detect_game_from_process
-from debug import printDeckyConstants
+from game import detect_game
 import re
 
 STATE_DIR = Path("/tmp/Toggle-Trackpad")
@@ -24,7 +23,6 @@ class Plugin:
         try:
             decky.logger.info(f"Comprobando el estado del archivo: {STATE_FILE}")
             os.makedirs(STATE_DIR, exist_ok=True)
-            printDeckyConstants() 
             if STATE_FILE.exists():
                 with open(STATE_FILE, "r") as f:
                     data = json.load(f)
@@ -53,29 +51,15 @@ class Plugin:
             decky.logger.error(f"Error al guardar el estado: {e}")
     async def get_running_game(self):
         try:
-            game =  None
-            if game:
-                decky.logger.info(f"Juego en ejecución: {game['display_name']} ({game['appid']})")
-                return {
-                    "running": True,
-                    "name": game["display_name"],
-                    "appid": game["appid"]
-                }
+            game = detect_game()
+            if game["appid"]:
+                decky.logger.info(f"Juego detectado: {game['name']} (AppID: {game['appid']})")
             else:
-                decky.logger.info("No hay juego en ejecución")
-                return {
-                    "running": False,
-                    "name": None,
-                    "appid": None
-                }
+                decky.logger.info("No se detectó ningún juego en ejecución.")
+            return game
         except Exception as e:
-            decky.logger.error(f"Error al obtener juego activo: {e}")
-            return {
-                "running": False,
-                "name": None,
-                "appid": None
-            }
-        
+            decky.logger.error(f"Error al detectar juego: {e}")
+            return {"appid": None, "name": None, "running": False}
     async def activate(self):
         decky.logger.info("Desactivando trackpads...")
         modificar_vdf(VDF_PATH)
