@@ -1,9 +1,10 @@
-import subprocess
-import re
-import urllib.request
-import urllib.parse
-import json
 import os
+import re
+import ssl
+import json
+import subprocess
+import urllib.parse
+import urllib.request
 import decky
 from utils import find_most_similar
 
@@ -48,7 +49,7 @@ def get_appid_from_gamedb(game_name):
         decky.logger.info(f"[GameDB] Searching AppID for: {game_name}")
         query = urllib.parse.quote(game_name)
         url = f"https://steam.watercollector.icu/search?q={query}"
-
+        context = ssl._create_unverified_context()  # 👈 ignora verificación SSL
         with urllib.request.urlopen(url, timeout=10) as response:
             data = response.read()
             results = json.loads(data)
