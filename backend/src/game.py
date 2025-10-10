@@ -1,4 +1,3 @@
-import os
 import re
 import ssl
 import json
@@ -6,9 +5,7 @@ import subprocess
 import urllib.parse
 import urllib.request
 import decky
-from utils import find_most_similar
-
-CACHE_FILE = "/tmp/Toggle-Trackpad/appid_cache.json"
+from utils import find_most_similar, load_game_config, save_game_config
 
 def detect_game_from_process():
     try:
@@ -25,31 +22,12 @@ def detect_game_from_process():
         decky.logger.error(f"[ERROR] detect_game_from_process: {e}")
         return None
 
-def load_cache():
-    if os.path.exists(CACHE_FILE):
-        try:
-            with open(CACHE_FILE, "r") as f:
-                return json.load(f)
-        except Exception as e:
-            decky.logger.error(f"[ERROR] loading cache: {e}")
-            return {}
-    return {}
-
-def save_cache(cache):
-    try:
-        os.makedirs(os.path.dirname(CACHE_FILE), exist_ok=True)
-        with open(CACHE_FILE, "w") as f:
-            json.dump(cache, f)
-        decky.logger.info("[CACHE] Saved successfully")
-    except Exception as e:
-        decky.logger.error(f"[ERROR] saving cache: {e}")
-
 def get_appid_from_gamedb(game_name):
     try:
         decky.logger.info(f"[GameDB] Searching AppID for: {game_name}")
         query = urllib.parse.quote(game_name)
         url = f"https://steam.watercollector.icu/search?q={query}"
-        context = ssl._create_unverified_context()  # 👈 ignora verificación SSL
+        context = ssl._create_unverified_context()
         with urllib.request.urlopen(url, timeout=10, context=context) as response:
             data = response.read()
             results = json.loads(data)
@@ -74,19 +52,17 @@ def get_running_game():
             "running": False
         }
 
-    cache = load_cache()
-    if game_name in cache:
-        decky.logger.info(f"[CACHE] Using cached AppID for {game_name}")
+    config = load_game_config(game_name)
+    if config:
         return {
-            "appid": cache[game_name]["appid"],
-            "name": cache[game_name]["name"],
+            "appid": config.appid,
+            "name": config.name,
             "running": True
         }
 
     appid, official_name = get_appid_from_gamedb(game_name)
     if appid:
-        cache[game_name] = {"appid": appid, "name": official_name}
-        save_cache(cache)
+        save_game_config(official_name, str(appid), trackpad_disabled=False)
         return {
             "appid": appid,
             "name": official_name,
