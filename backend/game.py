@@ -1,8 +1,9 @@
 import subprocess
 import re
-import requests
-import os
+import urllib.request
+import urllib.parse
 import json
+import os
 import decky
 from utils import find_most_similar
 
@@ -45,10 +46,12 @@ def save_cache(cache):
 def get_appid_from_gamedb(game_name):
     try:
         decky.logger.info(f"[GameDB] Searching AppID for: {game_name}")
-        url = f"https://steam.watercollector.icu/search?q={game_name}"
-        response = requests.get(url, timeout=10)
-        response.raise_for_status()
-        results = response.json()
+        query = urllib.parse.quote(game_name)
+        url = f"https://steam.watercollector.icu/search?q={query}"
+
+        with urllib.request.urlopen(url, timeout=10) as response:
+            data = response.read()
+            results = json.loads(data)
 
         if results:
             best = find_most_similar(game_name, results)
@@ -89,7 +92,7 @@ def get_running_game():
             "running": True
         }
 
-    decky.logger.warn(f"[GAME] Game detected but not correctly identified: {game_name}")
+    decky.logger.warning(f"[GAME] Game detected but not correctly identified: {game_name}")
     return {
         "appid": None,
         "name": "Game not correctly identified",
