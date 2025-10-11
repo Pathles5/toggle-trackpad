@@ -136,8 +136,11 @@ const PluginContent = () => {
             window.SP_REACT.createElement(DFL.ToggleField, { label: "Disable Trackpad", checked: toggleState, onChange: handleToggle, disabled: !toggleEnabled }))));
 };
 
-// import * as DeckyUI from "@decky/ui/src/globals/steam-client";
-// console.log("[Decky UI] Available exports:", DeckyUI);
+var DeckyUI = /*#__PURE__*/Object.freeze({
+  __proto__: null
+});
+
+console.log("[Decky UI] Available exports:", DeckyUI);
 var index = DFL.definePlugin(() => {
     return {
         title: window.SP_REACT.createElement("div", null, "Toggle Trackpad"),
