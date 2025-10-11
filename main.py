@@ -9,7 +9,18 @@ from utils import load_game_config, save_game_config
 
 STATE_DIR = Path("/tmp/Toggle-Trackpad")
 GAME_DIR = STATE_DIR / "games"
-VDF_PATH = "/home/deck/.local/share/Steam/steamapps/common/Steam Controller Configs/312585954/config/668580/controller_neptune.vdf"
+
+def get_vdf_path(appid: int) -> str:
+    """
+    Constructs the full path to the VDF file for a given Steam AppID.
+
+    Args:
+        appid (int): The Steam AppID of the game.
+
+    Returns:
+        str: Full path to the controller VDF file.
+    """
+    return f"{decky.HOME}/.local/share/Steam/steamapps/common/Steam Controller Configs/312585954/config/{appid}/controller_neptune.vdf"
 
 class Plugin:
     def __init__(self):
@@ -40,8 +51,14 @@ class Plugin:
         Returns:
             dict: A status object indicating success and that the toggle is now enabled.
         """
-        decky.logger.info("Disabling trackpads...")
-        modify_vdf(VDF_PATH)
+        detected = get_running_game()
+        if not detected or not detected["appid"]:
+            decky.logger.warning("No game detected → cannot activate")
+            return {"status": "error", "enabled": False}
+
+        vdf_path = get_vdf_path(detected["appid"])
+        decky.logger.info(f"Disabling trackpads for AppID {detected['appid']}...")
+        modify_vdf(vdf_path)
         await self.set_state(True)
         return {"status": "ok", "enabled": True}
 
@@ -52,8 +69,14 @@ class Plugin:
         Returns:
             dict: A status object indicating success and that the toggle is now disabled.
         """
-        decky.logger.info("Restoring trackpads...")
-        restore_vdf(VDF_PATH)
+        detected = get_running_game()
+        if not detected or not detected["appid"]:
+            decky.logger.warning("No game detected → cannot restore")
+            return {"status": "error", "enabled": False}
+
+        vdf_path = get_vdf_path(detected["appid"])
+        decky.logger.info(f"Restoring trackpads for AppID {detected['appid']}...")
+        restore_vdf(vdf_path)
         await self.set_state(False)
         return {"status": "ok", "enabled": False}
     
