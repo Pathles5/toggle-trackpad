@@ -8,6 +8,14 @@ import urllib.request
 from utils import find_most_similar, load_game_config, save_game_config
 
 def detect_game_from_process():
+    """
+    Detects the currently running game by inspecting system processes.
+
+    Scans for a Steam game executable path and extracts the game folder name.
+
+    Returns:
+        Optional[str]: The detected game name, or None if no game is found.
+    """
     try:
         result = subprocess.run(["ps", "aux"], stdout=subprocess.PIPE, text=True)
         for line in result.stdout.splitlines():
@@ -23,6 +31,15 @@ def detect_game_from_process():
         return None
 
 def get_appid_from_gamedb(game_name):
+    """
+    Queries the external GameDB API to retrieve the Steam AppID for a given game name.
+
+    Args:
+        game_name (str): The name of the game to search for.
+
+    Returns:
+        Optional[int]: The AppID if found, or None if no match is found or an error occurs.
+    """
     try:
         decky.logger.info(f"[GameDB] Searching AppID for: {game_name}")
         query = urllib.parse.quote(game_name)
@@ -43,6 +60,21 @@ def get_appid_from_gamedb(game_name):
     return None
 
 def get_running_game():
+    """
+    Determines the currently running game and returns its configuration.
+
+    - Detects the game from system processes.
+    - Loads its config from disk if available.
+    - If not found, queries the GameDB API and creates a new config.
+    - If detection fails, returns a fallback state.
+
+    Returns:
+        dict: {
+            "appid": int or None,
+            "name": str or None,
+            "running": bool
+        }
+    """
     game_name = detect_game_from_process()
     if not game_name:
         return {

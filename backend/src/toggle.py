@@ -5,14 +5,40 @@ from parseVdf import find_matching_brace
 from utils import read_text, write_text, backup_file
 
 def extract_presets(text: str):
+    """
+    Extracts all 'preset' blocks from the VDF text using regex.
+
+    Args:
+        text (str): Full VDF file content.
+
+    Returns:
+        List[str]: List of matched preset blocks as strings.
+    """
     pattern = r'"preset"\s*\{[^{}]*(?:\{[^{}]*\}[^{}]*)*\}'
     return re.findall(pattern, text, re.DOTALL)
 
-# 🔧 Enable: duplicate preset and action
 def disable_trackpads(block: str) -> str:
+    """
+    Removes all lines related to trackpads from a preset block.
+
+    Args:
+        block (str): A preset block of VDF text.
+
+    Returns:
+        str: Modified block with trackpad lines removed.
+    """
     return "\n".join([line for line in block.splitlines() if "trackpad" not in line.lower()])
 
 def duplicate_default_preset(text: str) -> str:
+    """
+    Duplicates the 'Default' preset block as '__backup' and disables trackpads in the original.
+
+    Args:
+        text (str): Full VDF file content.
+
+    Returns:
+        str: Modified VDF content with duplicated preset and trackpads disabled.
+    """
     if re.search(r'"preset"\s*\{[^{}]*"name"\s*"__backup"', text):
         decky.logger.warning("A '__backup' preset already exists. Skipping duplication.")
         return text
@@ -32,6 +58,15 @@ def duplicate_default_preset(text: str) -> str:
     return text.replace(default_block, default_mod + "\n" + backup, 1)
 
 def duplicate_default_action(text: str) -> str:
+    """
+    Duplicates the 'Default' action block as '__backup' inside the 'actions' section.
+
+    Args:
+        text (str): Full VDF file content.
+
+    Returns:
+        str: Modified VDF content with duplicated action block.
+    """
     if re.search(r'"__backup"\s*\{', text):
         decky.logger.warning("A '__backup' action already exists. Skipping duplication.")
         return text
@@ -62,6 +97,16 @@ def duplicate_default_action(text: str) -> str:
     return text[:open_idx] + new_actions + text[close_idx + 1:]
 
 def modify_vdf(path: str):
+    """
+    Modifies the VDF file by duplicating the 'Default' preset and action as '__backup',
+    and disables trackpads in the original preset.
+
+    Args:
+        path (str): Path to the VDF file.
+
+    Returns:
+        bool: True if modification succeeded, False if file not found.
+    """
     if not os.path.exists(path):
         decky.logger.error(f"File not found: {path}")
         return False
@@ -78,8 +123,16 @@ def modify_vdf(path: str):
     decky.logger.info("Modification completed.")
     return True
 
-# 🔧 Restore: revert preset and action
 def restore_preset(text: str) -> str:
+    """
+    Restores the original 'Default' preset from the '__backup' preset block.
+
+    Args:
+        text (str): Full VDF file content.
+
+    Returns:
+        str: VDF content with 'Default' preset restored and '__backup' removed.
+    """
     presets = extract_presets(text)
     default = next((b for b in presets if re.search(r'"name"\s*"Default"', b)), None)
     backup = next((b for b in presets if re.search(r'"name"\s*"__backup"', b)), None)
@@ -97,6 +150,15 @@ def restore_preset(text: str) -> str:
     return text
 
 def remove_action_backup(text: str) -> str:
+    """
+    Removes the '__backup' action block from the VDF content.
+
+    Args:
+        text (str): Full VDF file content.
+
+    Returns:
+        str: VDF content with '__backup' action removed.
+    """
     match = re.search(r'"__backup"\s*\{', text)
     if not match:
         decky.logger.error("No '__backup' action exists.")
@@ -110,6 +172,15 @@ def remove_action_backup(text: str) -> str:
     return text.replace(backup_block, "", 1)
 
 def restore_vdf(path: str):
+    """
+    Restores the VDF file by reverting the 'Default' preset and removing the '__backup' action.
+
+    Args:
+        path (str): Path to the VDF file.
+
+    Returns:
+        bool: True if restoration succeeded, False if file not found.
+    """
     if not os.path.exists(path):
         decky.logger.error(f"File not found: {path}")
         return False
