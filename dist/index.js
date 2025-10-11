@@ -136,6 +136,7 @@ const PluginContent = () => {
             window.SP_REACT.createElement(DFL.ToggleField, { label: "Disable Trackpad", checked: toggleState, onChange: handleToggle, disabled: !toggleEnabled }))));
 };
 
+console.log("[Decky UI] Available exports:", DFL);
 var index = DFL.definePlugin(() => {
     return {
         title: window.SP_REACT.createElement("div", null, "Toggle Trackpad"),
