@@ -20,79 +20,67 @@ def get_vdf_path(appid: int) -> str:
     Returns:
         str: Full path to the controller VDF file.
     """
-    return f"{decky.HOME}/.local/share/Steam/steamapps/common/Steam Controller Configs/312585954/config/{appid}/controller_neptune.vdf"
+    return f"/home/deck/.local/share/Steam/steamapps/common/Steam Controller Configs/312585954/config/{appid}/controller_neptune.vdf"
 
 class Plugin:
     def __init__(self):
-        """
-        Initializes the plugin instance and sets the in-memory game state to None.
-        This variable will hold the current GameConfig if a game is detected.
-        """
         self.current_game = None
 
     async def _main(self):
-        """
-        Called when the plugin is loaded.
-        Logs the initialization event.
-        """
         decky.logger.info("Toggle Trackpad plugin loaded")
 
     async def _unload(self):
-        """
-        Called when the plugin is unloaded.
-        Logs the unloading event.
-        """
         decky.logger.info("Toggle Trackpad plugin unloaded")
 
     async def activate(self):
-        """
-        Disables the trackpads by modifying the VDF file and updates the game state.
-
-        Returns:
-            dict: A status object indicating success and that the toggle is now enabled.
-        """
         detected = get_running_game()
         if not detected or not detected["appid"]:
             decky.logger.warning("No game detected → cannot activate")
             return {"status": "error", "enabled": False}
 
         vdf_path = get_vdf_path(detected["appid"])
+        if not os.path.exists(vdf_path):
+            decky.logger.error(f"File not found: {vdf_path}")
+            return {
+                "status": "missing_vdf",
+                "enabled": False,
+                "message": (
+                    "Trackpads cannot be disabled until you create an 'Action Set' in the controller layout editor. "
+                    "This is required to apply local changes with minimal impact on the system.\n\n"
+                    "Go to: Controller Settings > Edit Layout > Action Set > Create New Set"
+                )
+            }
+
         decky.logger.info(f"Disabling trackpads for AppID {detected['appid']}...")
         modify_vdf(vdf_path)
         await self.set_state(True)
         return {"status": "ok", "enabled": True}
 
     async def restore(self):
-        """
-        Restores the trackpads by reverting the VDF file and updates the game state.
-
-        Returns:
-            dict: A status object indicating success and that the toggle is now disabled.
-        """
         detected = get_running_game()
         if not detected or not detected["appid"]:
             decky.logger.warning("No game detected → cannot restore")
             return {"status": "error", "enabled": False}
 
         vdf_path = get_vdf_path(detected["appid"])
+        if not os.path.exists(vdf_path):
+            decky.logger.error(f"File not found: {vdf_path}")
+            return {
+                "status": "missing_vdf",
+                "enabled": False,
+                "message": (
+                    "Trackpads cannot be restored until an 'Action Set' has been created in the controller layout editor. "
+                    "This ensures safe reversal of changes.\n\n"
+                    "Go to: Controller Settings > Edit Layout > Action Set > Create New Set"
+                )
+            }
+
         decky.logger.info(f"Restoring trackpads for AppID {detected['appid']}...")
         restore_vdf(vdf_path)
         await self.set_state(False)
         return {"status": "ok", "enabled": False}
     
     async def get_state(self):
-        """
-        Determines the current state of the plugin based on the detected game.
-
-        If no game is running, disables the toggle.
-        If a game is running, loads its config from disk and updates memory.
-
-        Returns:
-            dict: {
-                "enabled": bool → whether the toggle is interactable,
-                "state": bool → whether the trackpad is currently disabled
-            }
-        """
         detected = get_running_game()
         if not detected or not detected["appid"]:
             decky.logger.info("No game detected → toggle disabled")
@@ -112,16 +100,6 @@ class Plugin:
         return {"enabled": True, "state": not self.current_game.trackpad_disabled}
 
     async def set_state(self, disabled: bool):
-        """
-        Updates the trackpad state for the current game.
-
-        If no game is detected, does nothing.
-        If the game has changed, reloads or creates its config.
-        Then updates both memory and disk with the new state.
-
-        Args:
-            disabled (bool): True to disable trackpad, False to enable.
-        """
         detected = get_running_game()
         if not detected or not detected["appid"]:
             decky.logger.warning("No game running → cannot set state")
@@ -146,16 +124,6 @@ class Plugin:
         decky.logger.info(f"Updated state for {self.current_game.name} → trackpad_disabled={disabled}")
 
     async def detect_game(self):
-        """
-        Detects the currently running game using system process inspection.
-
-        Returns:
-            dict: {
-                "running": bool,
-                "name": str or None,
-                "appid": int or None
-            }
-        """
         decky.logger.info("Checking for a running game...")
         try:
             game = get_running_game()
