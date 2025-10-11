@@ -87,66 +87,43 @@ if (api._version != API_VERSION) {
 const call = api.call;
 
 const PluginContent = () => {
-    const [enabled, setEnabled] = SP_REACT.useState(false);
-    const [runningGame, setRunningGame] = SP_REACT.useState(null);
+    const [toggleEnabled, setToggleEnabled] = SP_REACT.useState(false);
+    const [toggleState, setToggleState] = SP_REACT.useState(false);
+    const [gameLabel, setGameLabel] = SP_REACT.useState("Checking...");
     SP_REACT.useEffect(() => {
-        const fetchInitialData = async () => {
+        const fetchState = async () => {
             try {
                 const [state, game] = await Promise.all([
                     call("get_state"),
                     call("detect_game")
                 ]);
-                setEnabled(state);
-                log(`Initial game state: ${JSON.stringify(game)}`);
-                if (game && game.running) {
-                    log(`Active game: ${game.name} (AppID: ${game.appid})`);
-                    if (game.appid) {
-                        setRunningGame(`${game.name} (AppID: ${game.appid})`);
-                    }
-                    else {
-                        log("Game is running but not correctly identified");
-                        setRunningGame("Game running but not correctly identified");
-                    }
+                setToggleEnabled(state.enabled);
+                setToggleState(state.state);
+                if (game?.running) {
+                    setGameLabel(game.appid
+                        ? `${game.name} (AppID: ${game.appid})`
+                        : "Game running but not correctly identified");
                 }
                 else {
-                    setRunningGame("No game running");
+                    setGameLabel("No game running");
                 }
             }
             catch (error) {
-                console.error("Error fetching initial state:", error);
-                setRunningGame("Error querying game");
+                console.error("[Toggle Trackpad] Error fetching state:", error);
+                setGameLabel("Error querying game");
+                setToggleEnabled(false);
+                setToggleState(false);
             }
         };
-        fetchInitialData();
+        fetchState();
     }, []);
-    const toggleOn = async () => {
-        log("Disabling trackpad...");
-        try {
-            await call("activate");
-            setEnabled(true);
-            log("Trackpad disabled!");
-        }
-        catch (error) {
-            console.error("Error disabling the trackpad:", error);
-        }
-    };
-    const toggleOff = async () => {
-        log("Restoring trackpads...");
-        try {
-            await call("restore");
-            setEnabled(false);
-            log("Trackpads restored!");
-        }
-        catch (error) {
-            console.error("Error restoring the trackpad:", error);
-        }
-    };
     const handleToggle = async (val) => {
-        if (val) {
-            await toggleOn();
+        try {
+            await call(val ? "activate" : "restore");
+            setToggleState(val);
         }
-        else {
-            await toggleOff();
+        catch (error) {
+            console.error(`[Toggle Trackpad] Error toggling:`, error);
         }
     };
     return (window.SP_REACT.createElement(DFL.PanelSection, { title: "Options" },
@@ -154,11 +131,10 @@ const PluginContent = () => {
             window.SP_REACT.createElement("div", null,
                 window.SP_REACT.createElement("strong", null, "Active game:"),
                 " ",
-                runningGame)),
+                gameLabel)),
         window.SP_REACT.createElement(DFL.PanelSectionRow, null,
-            window.SP_REACT.createElement(DFL.ToggleField, { label: "Disable Trackpad", checked: enabled, onChange: handleToggle }))));
+            window.SP_REACT.createElement(DFL.ToggleField, { label: "Disable Trackpad", checked: toggleState, onChange: handleToggle, disabled: !toggleEnabled }))));
 };
-const log = (str) => console.log(`[Toggle Trackpad] ${str}`);
 
 var index = DFL.definePlugin(() => {
     return {
