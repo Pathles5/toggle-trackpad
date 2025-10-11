@@ -2,72 +2,59 @@ import { useEffect, useState } from "react";
 import { PanelSection, PanelSectionRow, ToggleField } from "@decky/ui";
 import { call } from "@decky/api";
 
+type GameDetection = {
+  running: boolean;
+  name: string | null;
+  appid: number | null;
+};
+
+type PluginState = {
+  enabled: boolean;
+  state: boolean;
+};
+
 const PluginContent = () => {
-  const [enabled, setEnabled] = useState(false);
-  const [runningGame, setRunningGame] = useState<string | null>(null);
+  const [toggleEnabled, setToggleEnabled] = useState(false);
+  const [toggleState, setToggleState] = useState(false);
+  const [gameLabel, setGameLabel] = useState("Checking...");
 
   useEffect(() => {
-    const fetchInitialData = async () => {
+    const fetchState = async () => {
       try {
-        const [state, game] = await Promise.all([
-          call<[], boolean>("get_state"),
-          call<[], {
-            running: boolean;
-            name: string | null;
-            appid: number | null;
-          }>("detect_game")
+        const [state, game]: [PluginState, GameDetection] = await Promise.all([
+          call<[], PluginState>("get_state"),
+          call<[], GameDetection>("detect_game")
         ]);
 
-        setEnabled(state);
-        log(`Initial game state: ${JSON.stringify(game)}`);
+        setToggleEnabled(state.enabled);
+        setToggleState(state.state);
 
-        if (game && game.running) {
-          log(`Active game: ${game.name} (AppID: ${game.appid})`);
-          if (game.appid) {
-            setRunningGame(`${game.name} (AppID: ${game.appid})`);
-          } else {
-            log("Game is running but not correctly identified");
-            setRunningGame("Game running but not correctly identified");
-          }
+        if (game?.running) {
+          setGameLabel(
+            game.appid
+              ? `${game.name} (AppID: ${game.appid})`
+              : "Game running but not correctly identified"
+          );
         } else {
-          setRunningGame("No game running");
+          setGameLabel("No game running");
         }
       } catch (error) {
-        console.error("Error fetching initial state:", error);
-        setRunningGame("Error querying game");
+        console.error("[Toggle Trackpad] Error fetching state:", error);
+        setGameLabel("Error querying game");
+        setToggleEnabled(false);
+        setToggleState(false);
       }
     };
 
-    fetchInitialData();
+    fetchState();
   }, []);
 
-  const toggleOn = async () => {
-    log("Disabling trackpad...");
-    try {
-      await call("activate");
-      setEnabled(true);
-      log("Trackpad disabled!");
-    } catch (error) {
-      console.error("Error disabling the trackpad:", error);
-    }
-  };
-
-  const toggleOff = async () => {
-    log("Restoring trackpads...");
-    try {
-      await call("restore");
-      setEnabled(false);
-      log("Trackpads restored!");
-    } catch (error) {
-      console.error("Error restoring the trackpad:", error);
-    }
-  };
-
   const handleToggle = async (val: boolean) => {
-    if (val) {
-      await toggleOn();
-    } else {
-      await toggleOff();
+    try {
+      await call<[], { status: string; enabled: boolean }>(val ? "activate" : "restore");
+      setToggleState(val);
+    } catch (error) {
+      console.error(`[Toggle Trackpad] Error toggling:`, error);
     }
   };
 
@@ -75,20 +62,19 @@ const PluginContent = () => {
     <PanelSection title="Options">
       <PanelSectionRow>
         <div>
-          <strong>Active game:</strong> {runningGame}
+          <strong>Active game:</strong> {gameLabel}
         </div>
       </PanelSectionRow>
       <PanelSectionRow>
         <ToggleField
           label="Disable Trackpad"
-          checked={enabled}
+          checked={toggleState}
           onChange={handleToggle}
+          disabled={!toggleEnabled}
         />
       </PanelSectionRow>
     </PanelSection>
   );
 };
-
-const log = (str: string) => console.log(`[Toggle Trackpad] ${str}`);
 
 export default PluginContent;
