@@ -21,6 +21,18 @@ class Plugin:
     async def _unload(self):
         decky.logger.info("Toggle Trackpad plugin unloaded")
 
+    async def activate(self):
+        decky.logger.info("Disabling trackpads...")
+        modify_vdf(VDF_PATH)
+        await self.set_state(True)
+        return {"status": "ok", "enabled": True}
+
+    async def restore(self):
+        decky.logger.info("Restoring trackpads...")
+        restore_vdf(VDF_PATH)
+        await self.set_state(False)
+        return {"status": "ok", "enabled": False}
+    
     async def get_state(self):
         detected = get_running_game()
         if not detected or not detected["appid"]:
@@ -68,17 +80,6 @@ class Plugin:
         )
         decky.logger.info(f"Updated state for {self.current_game.name} → trackpad_disabled={disabled}")
 
-    async def activate(self):
-        decky.logger.info("Disabling trackpads...")
-        modify_vdf(VDF_PATH)
-        await self.set_state(True)
-        return {"status": "ok", "enabled": True}
-
-    async def restore(self):
-        decky.logger.info("Restoring trackpads...")
-        restore_vdf(VDF_PATH)
-        await self.set_state(False)
-        return {"status": "ok", "enabled": False}
 
     async def detect_game(self):
         decky.logger.info("Checking for a running game...")

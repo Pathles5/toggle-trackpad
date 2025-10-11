@@ -1,10 +1,10 @@
 import re
 import ssl
 import json
+import decky
 import subprocess
 import urllib.parse
 import urllib.request
-import decky
 from utils import find_most_similar, load_game_config, save_game_config
 
 def detect_game_from_process():

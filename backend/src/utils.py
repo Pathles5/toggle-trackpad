@@ -2,7 +2,6 @@ import os
 import decky
 import shutil
 import difflib
-from datetime import datetime
 from typing import Optional, List, Dict
 from modules.GameConfig import GameConfig
 
@@ -45,7 +44,6 @@ def load_game_config(appname: str) -> Optional[GameConfig]:
         try:
             with open(path, "r") as f:
                 config = GameConfig.from_json(f.read())
-                config.last_seen = datetime.now().isoformat()
                 with open(path, "w") as fw:
                     fw.write(config.to_json())
                 return config
@@ -61,7 +59,6 @@ def save_game_config(appname: str, appid: str, trackpad_disabled: bool):
             appid=int(appid),
             name=appname,
             trackpad_disabled=trackpad_disabled,
-            last_seen=datetime.now().isoformat()
         )
         with open(path, "w") as f:
             f.write(config.to_json())
