@@ -144,7 +144,7 @@ const PluginContent = () => {
             // console.log("ExportCurrentControllerConfiguration");
             // console.log(await SteamClient.Input.ExportCurrentControllerConfiguration(0, 606150, 0, "Default", "Duplicated from console", "Defaultttt"));
             console.log("SteamClient.Input.GetControllerMappingString(0)");
-            console.log(SteamClient.Input.GetControllerMappingString(0));
+            console.log(await SteamClient.Input.GetControllerMappingString(0));
             setToggleState(val);
         }
         catch (error) {
