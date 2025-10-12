@@ -126,7 +126,7 @@ def save_game_config(appname: str, appid: str, trackpad_disabled: bool):
     """
     try:
         os.makedirs(GAME_DIR, exist_ok=True)
-        path = get_game_file(appname)
+        path = get_game_file(appid)
         config = GameConfig(
             appid=int(appid),
             name=appname,

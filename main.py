@@ -57,7 +57,7 @@ class Plugin:
         return {"status": "ok", "enabled": enabled}
 
     async def get_state(self, game: dict):
-        if not game and not game["appid"]:
+        if not game or not game.get("appid"):
             decky.logger.info("No game detected → toggle disabled")
             self.current_game = None
             return {"enabled": False, "state": False}
@@ -76,7 +76,7 @@ class Plugin:
 
 
     async def set_state(self, game: dict, disabled: bool):
-        if not game or not game["appid"]:
+        if not game or not game.get("appid"):
             decky.logger.warning("No game running → cannot set state")
             return
 
@@ -89,10 +89,10 @@ class Plugin:
                 self.current_game = save_game_config(game["display_name"], str(game["appid"]), disabled)
                 return
 
-        self.current_game.trackpad_disabled = disabled
+        self.current_game["trackpad_disabled"] = disabled
         save_game_config(
-            appname=self.current_game.name,
-            appid=str(self.current_game.appid),
+            appname=self.current_game["name"],
+            appid=str(self.current_game["appid"]),
             trackpad_disabled=disabled
         )
         decky.logger.info(f"Updated state for {self.current_game.name} → trackpad_disabled={disabled}")
