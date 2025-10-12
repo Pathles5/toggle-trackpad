@@ -70,12 +70,15 @@ const PluginContent = () => {
 
   const handleToggle = async (val: boolean) => {
     try {
-      await call<TogglePayload, { status: string; enabled: boolean }>(
+      const toggleState = await call<TogglePayload, { status: string; enabled: boolean }>(
         "toggle_trackpad",
         accountId,
         game,
         val
       );
+      console.log('toggleState');
+      console.log(toggleState);
+      
       setToggleState(val);
     } catch (error) {
       console.error(`[Toggle Trackpad] Error toggling:`, error);

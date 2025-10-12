@@ -74,6 +74,7 @@ class Plugin:
                 config = save_game_config(game["display_name"], game["appid"], False)
                 decky.logger.info(f"Game loaded: {config['name']} → trackpad_disabled={config['trackpad_disabled']}")
                 return {"enabled": True, "state": config["trackpad_disabled"]}
+        return {"enabled": True, "state": self.current_game.trackpad_disabled}
 
 
     async def set_state(self, game: dict, disabled: bool):
