@@ -77,6 +77,8 @@ const PluginContent = () => {
       console.log('toggleState');
       console.log(toggleState);
       
+      console.log(SteamClient.Input.DuplicateControllerConfigurationSourceMode(0,"javascript"));
+
       setToggleState(val);
     } catch (error) {
       console.error(`[Toggle Trackpad] Error toggling:`, error);
