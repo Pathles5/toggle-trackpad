@@ -42,7 +42,8 @@ const PluginContent = () => {
       if (app?.appid && app?.display_name) {
         setGame(app);
       }
-
+      console.log("Current app:", app);
+      console.log("Current game:", game);
       try {
         const state: PluginState = await Promise.resolve(
           call<[Game | null], PluginState>("get_state", game),

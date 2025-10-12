@@ -114,6 +114,8 @@ const PluginContent = () => {
             if (app?.appid && app?.display_name) {
                 setGame(app);
             }
+            console.log("Current app:", app);
+            console.log("Current game:", game);
             try {
                 const state = await Promise.resolve(call("get_state", game));
                 setToggleState(state.state);
