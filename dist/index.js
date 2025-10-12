@@ -145,6 +145,9 @@ const PluginContent = () => {
             // console.log(await SteamClient.Input.ExportCurrentControllerConfiguration(0, 606150, 0, "Default", "Duplicated from console", "Defaultttt"));
             console.log("SteamClient.Input.GetControllerMappingString(0)");
             console.log(await SteamClient.Input.GetControllerMappingString(0));
+            const controllerIndex = 0; // Steam Deck usually uses index 0
+            const mappingString = await SteamClient.Input.GetControllerMappingString(controllerIndex);
+            console.log("🎮 Controller Mapping:", mappingString);
             setToggleState(val);
         }
         catch (error) {
