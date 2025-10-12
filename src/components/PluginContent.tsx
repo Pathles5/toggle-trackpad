@@ -77,8 +77,10 @@ const PluginContent = () => {
       console.log('toggleState');
       console.log(toggleState);
       
-      console.log("await SteamClient.Input.DuplicateControllerConfigurationSourceMode(0,'javascript')");
-      console.log(await SteamClient.Input.DuplicateControllerConfigurationSourceMode(0,"javascript"));
+      console.log("DuplicateControllerConfigurationSourceMode");
+      console.log(await SteamClient.Input.DuplicateControllerConfigurationSourceMode(0,"Default"));
+      console.log("ExportCurrentControllerConfiguration");
+      console.log(await SteamClient.Input.ExportCurrentControllerConfiguration(0, 606150, 0, "Duplicated", "Duplicated from console", "Default"));
 
       setToggleState(val);
     } catch (error) {
