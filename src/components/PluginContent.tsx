@@ -2,12 +2,14 @@ import { useEffect, useState } from "react";
 import { PanelSection, PanelSectionRow, ToggleField, Router, AppOverview } from "@decky/ui";
 import { call } from "@decky/api";
 
+type Game = {appid: string, display_name: string};
+type TogglePayload = [accountId: string | null, language: string | null, game: Game | null];
 type PluginState = {
   enabled: boolean;
   state: boolean;
 };
 
-const formatGameLabel = (game?: AppOverview | null): String => {
+const formatGameLabel = (game?: Game | null): string => {
   if (!game) return "No game running";
   const { appid, display_name } = game;
   if (appid != null) return `${display_name ?? "Unknown"} (AppID: ${appid})`;
@@ -15,19 +17,17 @@ const formatGameLabel = (game?: AppOverview | null): String => {
 };
 
 const PluginContent = () => {
-  const [toggleEnabled, setToggleEnabled] = useState(false);
   const [toggleState, setToggleState] = useState(false);
-  const [accountId, setAccountId] = useState<String | null>(null);
-  const [language, setLanguage] = useState<String | null>(null);
-  const [game, setGame] = useState<AppOverview | null>(null);
-  console.log(toggleEnabled);
+  const [accountId, setAccountId] = useState<string | null>(null);
+  const [language, setLanguage] = useState<string | null>(null);
+  const [game, setGame] = useState<Game | null>(null);
 
   useEffect(() => {
     const fetchState = async () => {
       try {
         const id = await SteamClient.WebChat.GetCurrentUserAccountID();
         const lang = await SteamClient.Settings.GetCurrentLanguage();
-        setAccountId(id?.toString());
+        setAccountId(id.toString());
         setLanguage(lang);
       } catch (err) {
         console.error("Error fetching SteamClient data:", err);
@@ -42,11 +42,9 @@ const PluginContent = () => {
         const state: PluginState = await Promise.resolve(
           call<[], PluginState>("get_state"),
         );
-        setToggleEnabled(state.enabled);
         setToggleState(state.state);
       } catch (error) {
         console.error("[Toggle Trackpad] Error fetching state:", error);
-        setToggleEnabled(false);
         setToggleState(false);
       }
     };
@@ -56,7 +54,7 @@ const PluginContent = () => {
 
   const handleToggle = async (val: boolean) => {
     try {
-      await call<[accountId: String | null, language: String | null, appid: object | null], { status: string; enabled: boolean }>(
+      await call<TogglePayload, { status: string; enabled: boolean }>(
         val ? "activate" : "restore",
         accountId,
         language,
@@ -82,6 +80,12 @@ const PluginContent = () => {
           onChange={handleToggle}
           disabled={!game}
         />
+      </PanelSectionRow>
+      <PanelSectionRow>
+        <div style={{ fontSize: "0.9em", opacity: 0.7 }}>
+          <div>Account ID: {accountId ?? "Loading..."}</div>
+          <div>Language: {language ?? "Loading..."}</div>
+        </div>
       </PanelSectionRow>
     </PanelSection>
   );

@@ -95,18 +95,16 @@ const formatGameLabel = (game) => {
     return "Game running but not correctly identified";
 };
 const PluginContent = () => {
-    const [toggleEnabled, setToggleEnabled] = SP_REACT.useState(false);
     const [toggleState, setToggleState] = SP_REACT.useState(false);
     const [accountId, setAccountId] = SP_REACT.useState(null);
     const [language, setLanguage] = SP_REACT.useState(null);
     const [game, setGame] = SP_REACT.useState(null);
-    console.log(toggleEnabled);
     SP_REACT.useEffect(() => {
         const fetchState = async () => {
             try {
                 const id = await SteamClient.WebChat.GetCurrentUserAccountID();
                 const lang = await SteamClient.Settings.GetCurrentLanguage();
-                setAccountId(id?.toString());
+                setAccountId(id.toString());
                 setLanguage(lang);
             }
             catch (err) {
@@ -118,12 +116,10 @@ const PluginContent = () => {
             }
             try {
                 const state = await Promise.resolve(call("get_state"));
-                setToggleEnabled(state.enabled);
                 setToggleState(state.state);
             }
             catch (error) {
                 console.error("[Toggle Trackpad] Error fetching state:", error);
-                setToggleEnabled(false);
                 setToggleState(false);
             }
         };
@@ -145,7 +141,15 @@ const PluginContent = () => {
                 " ",
                 formatGameLabel(game))),
         window.SP_REACT.createElement(DFL.PanelSectionRow, null,
-            window.SP_REACT.createElement(DFL.ToggleField, { label: "Disable Trackpad", checked: toggleState, onChange: handleToggle, disabled: !game }))));
+            window.SP_REACT.createElement(DFL.ToggleField, { label: "Disable Trackpad", checked: toggleState, onChange: handleToggle, disabled: !game })),
+        window.SP_REACT.createElement(DFL.PanelSectionRow, null,
+            window.SP_REACT.createElement("div", { style: { fontSize: "0.9em", opacity: 0.7 } },
+                window.SP_REACT.createElement("div", null,
+                    "Account ID: ",
+                    accountId ?? "Loading..."),
+                window.SP_REACT.createElement("div", null,
+                    "Language: ",
+                    language ?? "Loading...")))));
 };
 
 var index = DFL.definePlugin(() => {
