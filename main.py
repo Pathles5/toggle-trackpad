@@ -4,7 +4,6 @@ from pathlib import Path
 
 sys.path.append(os.path.join(os.path.dirname(__file__), "backend/src"))
 from toggle import modify_vdf, restore_vdf
-from game import get_running_game
 from utils import load_game_config, save_game_config
 
 STATE_DIR = Path("/tmp/Toggle-Trackpad")
@@ -96,15 +95,3 @@ class Plugin:
             trackpad_disabled=disabled
         )
         decky.logger.info(f"Updated state for {self.current_game.name} → trackpad_disabled={disabled}")
-
-    # async def detect_game(self):
-    #     decky.logger.info("Checking for a running game...")
-    #     try:
-    #         game = get_running_game()
-    #         if game:
-    #             decky.logger.info(f"Detected game: {game}")
-    #         else:
-    #             decky.logger.info("No running game detected.")
-    #     except Exception as e:
-    #         decky.logger.error(f"Error detecting game from process: {e}")
-    #     return game
