@@ -57,7 +57,8 @@ class Plugin:
         return {"status": "ok", "enabled": enabled}
 
     async def get_state(self, game: dict):
-        if not game or not game.get("appid"):
+        decky.logger.warning(game)
+        if not game or not game["appid"]:
             decky.logger.info("No game detected → toggle disabled")
             self.current_game = None
             return {"enabled": False, "state": False}

@@ -127,9 +127,7 @@ const PluginContent = () => {
     }, []);
     const handleToggle = async (val) => {
         try {
-            console.log("[Toggle Trackpad] Toggling to:", accountId, game, val);
-            const toggleStatus = await call("toggle_trackpad", accountId, game, val);
-            console.log("[Toggle Trackpad] Toggle status:", toggleStatus);
+            await call("toggle_trackpad", accountId, game, val);
             setToggleState(val);
         }
         catch (error) {
