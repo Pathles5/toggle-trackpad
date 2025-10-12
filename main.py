@@ -86,7 +86,7 @@ class Plugin:
                 if config:
                     self.current_game = config
                 else:
-                    decky.logger.info(f"Creating new config for {game['name']}")
+                    decky.logger.info(f"Creating new config for {game['display_name']}")
                     self.current_game = save_game_config(game["display_name"], str(game["appid"]), disabled)
                     return
 
@@ -96,6 +96,6 @@ class Plugin:
                 appid=str(self.current_game["appid"]),
                 trackpad_disabled=disabled
             )
-            decky.logger.info(f"Updated state for {self.current_game['name']} → trackpad_disabled={disabled}")
+            decky.logger.info(f"Updated state for {self.current_game['display_name']} → trackpad_disabled={disabled}")
         except Exception as e:
-            decky.logger.error(f"[ERROR] Failed to set state for {game['name']}: {e}")
+            decky.logger.error(f"[ERROR] Failed to set state for {game['display_name']}: {e}")
