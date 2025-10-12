@@ -3,16 +3,17 @@ import { PanelSection, PanelSectionRow, ToggleField, Router } from "@decky/ui";
 import { call } from "@decky/api";
 
 type Game = {
-  appid: string,
-  display_name: string
+  appid: string;
+  display_name: string;
 };
+
 type TogglePayload = [accountId: string | null, game: Game | null, val: boolean];
+
 type PluginState = {
   enabled: boolean;
   state: boolean;
   msg: string;
 };
-
 
 const formatGameLabel = (game?: Game | null): string => {
   if (!game) return "No game running";
@@ -27,8 +28,9 @@ const PluginContent = () => {
   const [language, setLanguage] = useState<string | null>(null);
   const [game, setGame] = useState<Game | null>(null);
 
+  // Fetch Steam info and current game
   useEffect(() => {
-    const fetchState = async () => {
+    const fetchSteamInfo = async () => {
       try {
         const id = await SteamClient.WebChat.GetCurrentUserAccountID();
         const lang = await SteamClient.Settings.GetCurrentLanguage();
@@ -42,12 +44,20 @@ const PluginContent = () => {
       if (app?.appid && app?.display_name) {
         setGame(app);
       }
-      console.log("Current app:", app);
-      console.log("Current game:", game);
+    };
+
+    fetchSteamInfo();
+  }, []);
+
+  // Fetch plugin state when game changes
+  useEffect(() => {
+    if (!game) return;
+
+    console.log("Game updated:", game);
+
+    const fetchState = async () => {
       try {
-        const state: PluginState = await Promise.resolve(
-          call<[Game | null], PluginState>("get_state", game),
-        );
+        const state: PluginState = await call<[Game | null], PluginState>("get_state", game);
         setToggleState(state.state);
       } catch (error) {
         console.error("[Toggle Trackpad] Error fetching state:", error);
@@ -56,7 +66,7 @@ const PluginContent = () => {
     };
 
     fetchState();
-  }, []);
+  }, [game]);
 
   const handleToggle = async (val: boolean) => {
     try {

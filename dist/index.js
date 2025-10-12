@@ -99,8 +99,9 @@ const PluginContent = () => {
     const [accountId, setAccountId] = SP_REACT.useState(null);
     const [language, setLanguage] = SP_REACT.useState(null);
     const [game, setGame] = SP_REACT.useState(null);
+    // Fetch Steam info and current game
     SP_REACT.useEffect(() => {
-        const fetchState = async () => {
+        const fetchSteamInfo = async () => {
             try {
                 const id = await SteamClient.WebChat.GetCurrentUserAccountID();
                 const lang = await SteamClient.Settings.GetCurrentLanguage();
@@ -114,10 +115,17 @@ const PluginContent = () => {
             if (app?.appid && app?.display_name) {
                 setGame(app);
             }
-            console.log("Current app:", app);
-            console.log("Current game:", game);
+        };
+        fetchSteamInfo();
+    }, []);
+    // Fetch plugin state when game changes
+    SP_REACT.useEffect(() => {
+        if (!game)
+            return;
+        console.log("Game updated:", game);
+        const fetchState = async () => {
             try {
-                const state = await Promise.resolve(call("get_state", game));
+                const state = await call("get_state", game);
                 setToggleState(state.state);
             }
             catch (error) {
@@ -126,7 +134,7 @@ const PluginContent = () => {
             }
         };
         fetchState();
-    }, []);
+    }, [game]);
     const handleToggle = async (val) => {
         try {
             await call("toggle_trackpad", accountId, game, val);
