@@ -52,7 +52,7 @@ const PluginContent = () => {
   // Fetch plugin state when game changes
   useEffect(() => {
     if (!game) return;
-    
+
     const fetchState = async () => {
       try {
         const state: PluginState = await call<[Game | null], PluginState>("get_state", game);
@@ -76,11 +76,14 @@ const PluginContent = () => {
       );
       console.log('toggleState');
       console.log(toggleState);
-      
+
       // console.log("DuplicateControllerConfigurationSourceMode");
       // console.log(await SteamClient.Input.DuplicateControllerConfigurationSourceMode(0,"Default"));
-      console.log("ExportCurrentControllerConfiguration");
-      console.log(await SteamClient.Input.ExportCurrentControllerConfiguration(0, 606150, 0, "Default", "Duplicated from console", "Defaultttt"));
+      // console.log("ExportCurrentControllerConfiguration");
+      // console.log(await SteamClient.Input.ExportCurrentControllerConfiguration(0, 606150, 0, "Default", "Duplicated from console", "Defaultttt"));
+
+      console.log("SteamClient.Input.GetControllerMappingString(0)")
+      console.log(SteamClient.Input.GetControllerMappingString(0))
 
       setToggleState(val);
     } catch (error) {
