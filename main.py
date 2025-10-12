@@ -32,7 +32,7 @@ class Plugin:
     async def _unload(self):
         decky.logger.info("Toggle Trackpad plugin unloaded")
 
-    async def activate(self):
+    async def activate(self, accountId: str, language: str, appid: dict):
         detected = get_running_game()
         if not detected or not detected["appid"]:
             decky.logger.warning("No game detected → cannot activate")
@@ -56,7 +56,7 @@ class Plugin:
         await self.set_state(True)
         return {"status": "ok", "enabled": True}
 
-    async def restore(self):
+    async def restore(self, accountId: str, language: str, appid: dict):
         detected = get_running_game()
         if not detected or not detected["appid"]:
             decky.logger.warning("No game detected → cannot restore")

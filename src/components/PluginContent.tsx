@@ -17,9 +17,10 @@ const formatGameLabel = (game?: AppOverview | null): String => {
 const PluginContent = () => {
   const [toggleEnabled, setToggleEnabled] = useState(false);
   const [toggleState, setToggleState] = useState(false);
-  const [accountId, setAccountId] = useState<string | null>(null);
-  const [language, setLanguage] = useState<string | null>(null);
+  const [accountId, setAccountId] = useState<String | null>(null);
+  const [language, setLanguage] = useState<String | null>(null);
   const [game, setGame] = useState<AppOverview | null>(null);
+  console.log(toggleEnabled);
 
   useEffect(() => {
     const fetchState = async () => {
@@ -36,9 +37,6 @@ const PluginContent = () => {
       if (app?.appid && app?.display_name) {
         setGame(app);
       }
-      // else{ // TODO por evaluar si hace falta al pasar a game > no-sgame
-      //   setGame(null);
-      // }
 
       try {
         const state: PluginState = await Promise.resolve(
@@ -58,7 +56,12 @@ const PluginContent = () => {
 
   const handleToggle = async (val: boolean) => {
     try {
-      await call<[], { status: string; enabled: boolean }>(val ? "activate" : "restore");
+      await call<[accountId: String | null, language: String | null, appid: object | null], { status: string; enabled: boolean }>(
+        val ? "activate" : "restore",
+        accountId,
+        language,
+        game
+      );
       setToggleState(val);
     } catch (error) {
       console.error(`[Toggle Trackpad] Error toggling:`, error);
@@ -77,16 +80,8 @@ const PluginContent = () => {
           label="Disable Trackpad"
           checked={toggleState}
           onChange={handleToggle}
-          disabled={!toggleEnabled}
+          disabled={!game}
         />
-      </PanelSectionRow>
-      <PanelSectionRow>
-        <div style={{ fontSize: "0.9em", opacity: 0.7 }}>
-          <div>AppID (Router): {game?.appid ?? "N/A"}</div>
-          <div>App Name: {game?.display_name ?? "N/A"}</div>
-          <div>Account ID: {accountId ?? "N/A"}</div>
-          <div>Language: {language ?? "N/A"}</div>
-        </div>
       </PanelSectionRow>
     </PanelSection>
   );

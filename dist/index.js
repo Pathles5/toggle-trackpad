@@ -100,6 +100,7 @@ const PluginContent = () => {
     const [accountId, setAccountId] = SP_REACT.useState(null);
     const [language, setLanguage] = SP_REACT.useState(null);
     const [game, setGame] = SP_REACT.useState(null);
+    console.log(toggleEnabled);
     SP_REACT.useEffect(() => {
         const fetchState = async () => {
             try {
@@ -115,9 +116,6 @@ const PluginContent = () => {
             if (app?.appid && app?.display_name) {
                 setGame(app);
             }
-            // else{ // TODO por evaluar si hace falta al pasar a game > no-sgame
-            //   setGame(null);
-            // }
             try {
                 const state = await Promise.resolve(call("get_state"));
                 setToggleEnabled(state.enabled);
@@ -133,7 +131,7 @@ const PluginContent = () => {
     }, []);
     const handleToggle = async (val) => {
         try {
-            await call(val ? "activate" : "restore");
+            await call(val ? "activate" : "restore", accountId, language, game);
             setToggleState(val);
         }
         catch (error) {
@@ -147,21 +145,7 @@ const PluginContent = () => {
                 " ",
                 formatGameLabel(game))),
         window.SP_REACT.createElement(DFL.PanelSectionRow, null,
-            window.SP_REACT.createElement(DFL.ToggleField, { label: "Disable Trackpad", checked: toggleState, onChange: handleToggle, disabled: !toggleEnabled })),
-        window.SP_REACT.createElement(DFL.PanelSectionRow, null,
-            window.SP_REACT.createElement("div", { style: { fontSize: "0.9em", opacity: 0.7 } },
-                window.SP_REACT.createElement("div", null,
-                    "AppID (Router): ",
-                    game?.appid ?? "N/A"),
-                window.SP_REACT.createElement("div", null,
-                    "App Name: ",
-                    game?.display_name ?? "N/A"),
-                window.SP_REACT.createElement("div", null,
-                    "Account ID: ",
-                    accountId ?? "N/A"),
-                window.SP_REACT.createElement("div", null,
-                    "Language: ",
-                    language ?? "N/A")))));
+            window.SP_REACT.createElement(DFL.ToggleField, { label: "Disable Trackpad", checked: toggleState, onChange: handleToggle, disabled: !game }))));
 };
 
 var index = DFL.definePlugin(() => {
