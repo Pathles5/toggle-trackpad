@@ -1,5 +1,6 @@
 // import * as DeckyUI from "@decky/ui/dist/globals/steam-client/User";
 import "@decky/ui";
+import { EDisplayStatus } from "@decky/ui/dist/globals/steam-client/App";
 
 
 console.log("SteamClient.Input.ShowControllerSettings:")
@@ -21,3 +22,15 @@ console.log(await SteamClient.System.GetSystemInfo()) // Promise<SystemInfo>
 console.log("SteamClient.WebChat.GetCurrentUserAccountID:"+await SteamClient.WebChat.GetCurrentUserAccountID())
 //Get current language: spanish
 console.log("SteamClient.Settings.GetCurrentLanguage:"+await SteamClient.Settings.GetCurrentLanguage())
+
+import { Router } from "@decky/ui";
+export type AppOverview = {
+    appid: string;
+    display_name: string;
+    display_status: EDisplayStatus;
+    sort_as: string;
+}
+console.log("Router.MainRunningApp")
+console.log(Router.MainRunningApp) // AppOverview
+console.log("Router.RunningApps")
+console.log(Router.RunningApps) // AppOverview[]
