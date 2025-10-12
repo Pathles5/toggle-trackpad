@@ -191,13 +191,20 @@ console.log("[Decky UI] Available exports:", DeckyUI);
 // console.log("SteamClient.Input.SetControllerPersonalizationSetting:"+SteamClient.Input.SetControllerPersonalizationSetting)
 // console.log("SteamClient.Input.SetEditingControllerConfigurationActionSet:"+SteamClient.Input.SetEditingControllerConfigurationActionSet)
 // console.log("SteamClient.Input.SetEditingControllerConfigurationInputBinding:"+SteamClient.Input.SetEditingControllerConfigurationInputBinding)
-console.log("SteamClient.Auth.GetMachineID:" + await SteamClient.Auth.GetMachineID());
-console.log("SteamClient.Input.ShowControllerSettings:" + SteamClient.Input.ShowControllerSettings());
-console.log("SteamClient.Settings.GetAccountSettings:" + await SteamClient.Settings.GetAccountSettings());
-console.log("SteamClient.Settings.GetCurrentLanguage:" + await SteamClient.Settings.GetCurrentLanguage());
-console.log("SteamClient.System.GetSystemInfo:" + await SteamClient.System.GetSystemInfo());
-console.log("SteamClient.User:" + await SteamClient.User.GetLoginUsers());
+console.log("SteamClient.Input.ShowControllerSettings:");
+console.log(SteamClient.Input.ShowControllerSettings());
+console.log("SteamClient.Auth.GetMachineID:");
+console.log(await SteamClient.Auth.GetMachineID());
+console.log("SteamClient.Settings.GetAccountSettings:");
+console.log(await SteamClient.Settings.GetAccountSettings()); //Promise<AccountSettings>
+console.log("SteamClient.System.GetSystemInfo:");
+console.log(await SteamClient.System.GetSystemInfo()); // Promise<SystemInfo>
+console.log("await SteamClient.User.GetLoginUsers():");
+console.log(await SteamClient.User.GetLoginUsers()); //  Promise<LoginUser[]>;
+//Get current user account ID:
 console.log("SteamClient.WebChat.GetCurrentUserAccountID:" + await SteamClient.WebChat.GetCurrentUserAccountID());
+//Get current language: spanish
+console.log("SteamClient.Settings.GetCurrentLanguage:" + await SteamClient.Settings.GetCurrentLanguage());
 var index = DFL.definePlugin(() => {
     return {
         title: window.SP_REACT.createElement("div", null, "Toggle Trackpad"),
