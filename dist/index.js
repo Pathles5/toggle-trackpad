@@ -86,55 +86,47 @@ if (api._version != API_VERSION) {
 // TODO these could use a lot of JSDoc
 const call = api.call;
 
+const formatGameLabel = (game) => {
+    if (!game)
+        return "No game running";
+    const { appid, display_name } = game;
+    if (appid != null)
+        return `${display_name ?? "Unknown"} (AppID: ${appid})`;
+    return "Game running but not correctly identified";
+};
 const PluginContent = () => {
     const [toggleEnabled, setToggleEnabled] = SP_REACT.useState(false);
     const [toggleState, setToggleState] = SP_REACT.useState(false);
-    const [gameLabel, setGameLabel] = SP_REACT.useState("Checking...");
     const [accountId, setAccountId] = SP_REACT.useState(null);
     const [language, setLanguage] = SP_REACT.useState(null);
-    const [appId, setAppId] = SP_REACT.useState(null);
-    const [appName, setAppName] = SP_REACT.useState(null);
+    const [game, setGame] = SP_REACT.useState(null);
     SP_REACT.useEffect(() => {
         const fetchState = async () => {
             try {
-                const [state, game] = await Promise.all([
-                    call("get_state"),
-                    call("detect_game")
-                ]);
-                setToggleEnabled(state.enabled);
-                setToggleState(state.state);
-                if (game?.running) {
-                    setGameLabel(game.appid
-                        ? `${game.name} (AppID: ${game.appid})`
-                        : "Game running but not correctly identified");
-                }
-                else {
-                    setGameLabel("No game running");
-                }
-            }
-            catch (error) {
-                console.error("[Toggle Trackpad] Error fetching state:", error);
-                setGameLabel("Error querying game");
-                setToggleEnabled(false);
-                setToggleState(false);
-            }
-            // Nuevos datos desde el frontend
-            const app = DFL.Router.MainRunningApp;
-            console.log("Router.MainRunningApp:", app);
-            if (app?.appid && app?.display_name) {
-                setAppId(app.appid);
-                setAppName(app.display_name);
-            }
-            try {
                 const id = await SteamClient.WebChat.GetCurrentUserAccountID();
                 const lang = await SteamClient.Settings.GetCurrentLanguage();
-                console.log("SteamClient.WebChat.GetCurrentUserAccountID:", id);
-                console.log("SteamClient.Settings.GetCurrentLanguage:", lang);
                 setAccountId(id?.toString());
                 setLanguage(lang);
             }
             catch (err) {
                 console.error("Error fetching SteamClient data:", err);
+            }
+            const app = DFL.Router.MainRunningApp;
+            if (app?.appid && app?.display_name) {
+                setGame(app);
+            }
+            // else{ // TODO por evaluar si hace falta al pasar a game > no-sgame
+            //   setGame(null);
+            // }
+            try {
+                const state = await Promise.resolve(call("get_state"));
+                setToggleEnabled(state.enabled);
+                setToggleState(state.state);
+            }
+            catch (error) {
+                console.error("[Toggle Trackpad] Error fetching state:", error);
+                setToggleEnabled(false);
+                setToggleState(false);
             }
         };
         fetchState();
@@ -153,17 +145,17 @@ const PluginContent = () => {
             window.SP_REACT.createElement("div", null,
                 window.SP_REACT.createElement("strong", null, "Active game:"),
                 " ",
-                gameLabel)),
+                formatGameLabel(game))),
         window.SP_REACT.createElement(DFL.PanelSectionRow, null,
             window.SP_REACT.createElement(DFL.ToggleField, { label: "Disable Trackpad", checked: toggleState, onChange: handleToggle, disabled: !toggleEnabled })),
         window.SP_REACT.createElement(DFL.PanelSectionRow, null,
             window.SP_REACT.createElement("div", { style: { fontSize: "0.9em", opacity: 0.7 } },
                 window.SP_REACT.createElement("div", null,
                     "AppID (Router): ",
-                    appId ?? "N/A"),
+                    game?.appid ?? "N/A"),
                 window.SP_REACT.createElement("div", null,
                     "App Name: ",
-                    appName ?? "N/A"),
+                    game?.display_name ?? "N/A"),
                 window.SP_REACT.createElement("div", null,
                     "Account ID: ",
                     accountId ?? "N/A"),
