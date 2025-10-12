@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { PanelSection, PanelSectionRow, ToggleField, Router, AppOverview } from "@decky/ui";
+import { PanelSection, PanelSectionRow, ToggleField, Router } from "@decky/ui";
 import { call } from "@decky/api";
 
 type Game = {appid: string, display_name: string};
