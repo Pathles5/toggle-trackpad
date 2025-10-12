@@ -90,6 +90,10 @@ const PluginContent = () => {
     const [toggleEnabled, setToggleEnabled] = SP_REACT.useState(false);
     const [toggleState, setToggleState] = SP_REACT.useState(false);
     const [gameLabel, setGameLabel] = SP_REACT.useState("Checking...");
+    const [accountId, setAccountId] = SP_REACT.useState(null);
+    const [language, setLanguage] = SP_REACT.useState(null);
+    const [appId, setAppId] = SP_REACT.useState(null);
+    const [appName, setAppName] = SP_REACT.useState(null);
     SP_REACT.useEffect(() => {
         const fetchState = async () => {
             try {
@@ -114,6 +118,24 @@ const PluginContent = () => {
                 setToggleEnabled(false);
                 setToggleState(false);
             }
+            // Nuevos datos desde el frontend
+            const app = DFL.Router.MainRunningApp;
+            console.log("Router.MainRunningApp:", app);
+            if (app?.appid && app?.display_name) {
+                setAppId(app.appid);
+                setAppName(app.display_name);
+            }
+            try {
+                const id = await SteamClient.WebChat.GetCurrentUserAccountID();
+                const lang = await SteamClient.Settings.GetCurrentLanguage();
+                console.log("SteamClient.WebChat.GetCurrentUserAccountID:", id);
+                console.log("SteamClient.Settings.GetCurrentLanguage:", lang);
+                setAccountId(id?.toString());
+                setLanguage(lang);
+            }
+            catch (err) {
+                console.error("Error fetching SteamClient data:", err);
+            }
         };
         fetchState();
     }, []);
@@ -133,15 +155,23 @@ const PluginContent = () => {
                 " ",
                 gameLabel)),
         window.SP_REACT.createElement(DFL.PanelSectionRow, null,
-            window.SP_REACT.createElement(DFL.ToggleField, { label: "Disable Trackpad", checked: toggleState, onChange: handleToggle, disabled: !toggleEnabled }))));
+            window.SP_REACT.createElement(DFL.ToggleField, { label: "Disable Trackpad", checked: toggleState, onChange: handleToggle, disabled: !toggleEnabled })),
+        window.SP_REACT.createElement(DFL.PanelSectionRow, null,
+            window.SP_REACT.createElement("div", { style: { fontSize: "0.9em", opacity: 0.7 } },
+                window.SP_REACT.createElement("div", null,
+                    "AppID (Router): ",
+                    appId ?? "N/A"),
+                window.SP_REACT.createElement("div", null,
+                    "App Name: ",
+                    appName ?? "N/A"),
+                window.SP_REACT.createElement("div", null,
+                    "Account ID: ",
+                    accountId ?? "N/A"),
+                window.SP_REACT.createElement("div", null,
+                    "Language: ",
+                    language ?? "N/A")))));
 };
 
-console.log("Router.MainRunningApp");
-console.log(DFL.Router.MainRunningApp);
-console.log("Router.RunningApps");
-console.log(DFL.Router.RunningApps);
-console.log("await SteamClient.InstallFolder.GetInstallFolders()");
-console.log(await SteamClient.InstallFolder.GetInstallFolders());
 var index = DFL.definePlugin(() => {
     return {
         title: window.SP_REACT.createElement("div", null, "Toggle Trackpad"),
