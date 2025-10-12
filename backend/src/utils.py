@@ -115,7 +115,7 @@ def load_game_config(appid: str) -> Optional[GameConfig]:
             decky.logger.error(f"[ERROR] Failed to load game config for {appid}: {e}")
     return None
 
-def save_game_config(appname: str, appid: str, trackpad_disabled: bool):
+def save_game_config(appname: str, appid: str, trackpad_disabled: bool) -> Optional[GameConfig]:
     """
     Saves a game's configuration to disk.
 
@@ -135,5 +135,7 @@ def save_game_config(appname: str, appid: str, trackpad_disabled: bool):
         with open(path, "w") as f:
             f.write(config.to_json())
         decky.logger.info(f"[STATE] Saved config for {appname}")
+        return config
     except Exception as e:
         decky.logger.error(f"[ERROR] Failed to save game config for {appname}: {e}")
+        return None
