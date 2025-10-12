@@ -139,7 +139,8 @@ const PluginContent = () => {
             const toggleState = await call("toggle_trackpad", accountId, game, val);
             console.log('toggleState');
             console.log(toggleState);
-            console.log(SteamClient.Input.DuplicateControllerConfigurationSourceMode(0, "javascript"));
+            console.log("await SteamClient.Input.DuplicateControllerConfigurationSourceMode(0,'javascript')");
+            console.log(await SteamClient.Input.DuplicateControllerConfigurationSourceMode(0, "javascript"));
             setToggleState(val);
         }
         catch (error) {
