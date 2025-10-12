@@ -53,7 +53,7 @@ class Plugin:
             decky.logger.info(f"Restoring trackpads for AppID {appid}...")
             restore_vdf(vdf_path)
 
-        await self.set_state(game["appid"],enabled)
+        await self.set_state(game,enabled)
         return {"status": "ok", "enabled": enabled}
 
     async def get_state(self, game: dict):
