@@ -81,7 +81,7 @@ def backup_file(path: str, suffix: str = ".bak") -> str:
     shutil.copy(path, backup_path)
     return backup_path
 
-def get_game_file(appname: str) -> str:
+def get_game_file(appid: str) -> str:
     """
     Constructs the full path to a game's configuration file.
 
@@ -91,9 +91,9 @@ def get_game_file(appname: str) -> str:
     Returns:
         str: Full path to the game's JSON config file.
     """
-    return os.path.join(GAME_DIR, f"{appname}.json")
+    return os.path.join(GAME_DIR, f"{appid}.json")
 
-def load_game_config(appname: str) -> Optional[GameConfig]:
+def load_game_config(appid: str) -> Optional[GameConfig]:
     """
     Loads a game's configuration from disk.
 
@@ -103,7 +103,7 @@ def load_game_config(appname: str) -> Optional[GameConfig]:
     Returns:
         Optional[GameConfig]: Parsed GameConfig object if found and valid, otherwise None.
     """
-    path = get_game_file(appname)
+    path = get_game_file(appid)
     if os.path.exists(path):
         try:
             with open(path, "r") as f:
@@ -112,7 +112,7 @@ def load_game_config(appname: str) -> Optional[GameConfig]:
                     fw.write(config.to_json())
                 return config
         except Exception as e:
-            decky.logger.error(f"[ERROR] Failed to load game config for {appname}: {e}")
+            decky.logger.error(f"[ERROR] Failed to load game config for {appid}: {e}")
     return None
 
 def save_game_config(appname: str, appid: str, trackpad_disabled: bool):

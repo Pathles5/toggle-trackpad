@@ -115,7 +115,7 @@ const PluginContent = () => {
                 setGame(app);
             }
             try {
-                const state = await Promise.resolve(call("get_state"));
+                const state = await Promise.resolve(call("get_state", game));
                 setToggleState(state.state);
             }
             catch (error) {
@@ -127,7 +127,7 @@ const PluginContent = () => {
     }, []);
     const handleToggle = async (val) => {
         try {
-            await call(val ? "activate" : "restore", accountId, language, game);
+            await call("toggle_trackpad", accountId, game, val);
             setToggleState(val);
         }
         catch (error) {

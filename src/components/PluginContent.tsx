@@ -2,12 +2,17 @@ import { useEffect, useState } from "react";
 import { PanelSection, PanelSectionRow, ToggleField, Router } from "@decky/ui";
 import { call } from "@decky/api";
 
-type Game = {appid: string, display_name: string};
-type TogglePayload = [accountId: string | null, language: string | null, game: Game | null];
+type Game = {
+  appid: string,
+  display_name: string
+};
+type TogglePayload = [accountId: string | null, game: Game | null, val: boolean];
 type PluginState = {
   enabled: boolean;
   state: boolean;
+  msg: string;
 };
+
 
 const formatGameLabel = (game?: Game | null): string => {
   if (!game) return "No game running";
@@ -40,7 +45,7 @@ const PluginContent = () => {
 
       try {
         const state: PluginState = await Promise.resolve(
-          call<[], PluginState>("get_state"),
+          call<[Game | null], PluginState>("get_state", game),
         );
         setToggleState(state.state);
       } catch (error) {
@@ -55,10 +60,10 @@ const PluginContent = () => {
   const handleToggle = async (val: boolean) => {
     try {
       await call<TogglePayload, { status: string; enabled: boolean }>(
-        val ? "activate" : "restore",
+        "toggle_trackpad",
         accountId,
-        language,
-        game
+        game,
+        val
       );
       setToggleState(val);
     } catch (error) {
