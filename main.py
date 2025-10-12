@@ -65,12 +65,13 @@ class Plugin:
         if not self.current_game or self.current_game["appid"] != game["appid"]:
             config = load_game_config(game["appid"])
             if config:
+                decky.logger.info(config)
                 self.current_game = config
-                decky.logger.info(f"Game loaded: {config["name"]} → trackpad_disabled={config["trackpad_disabled"]}")
+                decky.logger.info(f"Game loaded: {config['name']} → trackpad_disabled={config['trackpad_disabled']}")
                 return {"enabled": True, "state": not config["trackpad_disabled"]}
             else:
                 config = save_game_config(game["display_name"], game["appid"], False)
-                decky.logger.info(f"Game loaded: {config["name"]} → trackpad_disabled={config["trackpad_disabled"]}")
+                decky.logger.info(f"Game loaded: {config['name']} → trackpad_disabled={config['trackpad_disabled']}")
                 return {"enabled": True, "state": config["trackpad_disabled"]}
 
 
