@@ -52,9 +52,7 @@ const PluginContent = () => {
   // Fetch plugin state when game changes
   useEffect(() => {
     if (!game) return;
-
-    console.log("Game updated:", game);
-
+    
     const fetchState = async () => {
       try {
         const state: PluginState = await call<[Game | null], PluginState>("get_state", game);

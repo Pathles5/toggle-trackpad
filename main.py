@@ -68,12 +68,13 @@ class Plugin:
             if config:
                 decky.logger.info(config)
                 self.current_game = config
-                decky.logger.info(f"Game loaded: {config['name']} → trackpad_disabled={config['trackpad_disabled']}")
-                return {"enabled": True, "state": not config["trackpad_disabled"]}
+                decky.logger.info(f"Game loaded: {config.name} → trackpad_disabled={config.trackpad_disabled}")
+                return {"enabled": True, "state": self.current_game.trackpad_disabled}
             else:
                 config = save_game_config(game["display_name"], game["appid"], False)
-                decky.logger.info(f"Game loaded: {config['name']} → trackpad_disabled={config['trackpad_disabled']}")
-                return {"enabled": True, "state": config["trackpad_disabled"]}
+                decky.logger.info(f"Game loaded: {config.name} → trackpad_disabled={config.trackpad_disabled}")
+                return {"enabled": True, "state": config.trackpad_disabled}
+        decky.logger.info(f"[FINAL STATE] Returning state from memory: {self.current_game.name}, disabled={self.current_game.trackpad_disabled}")
         return {"enabled": True, "state": self.current_game.trackpad_disabled}
 
 

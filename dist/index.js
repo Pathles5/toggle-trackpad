@@ -122,7 +122,6 @@ const PluginContent = () => {
     SP_REACT.useEffect(() => {
         if (!game)
             return;
-        console.log("Game updated:", game);
         const fetchState = async () => {
             try {
                 const state = await call("get_state", game);
@@ -137,7 +136,9 @@ const PluginContent = () => {
     }, [game]);
     const handleToggle = async (val) => {
         try {
-            await call("toggle_trackpad", accountId, game, val);
+            const toggleState = await call("toggle_trackpad", accountId, game, val);
+            console.log('toggleState');
+            console.log(toggleState);
             setToggleState(val);
         }
         catch (error) {
