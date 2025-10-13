@@ -87,37 +87,6 @@ if (api._version != API_VERSION) {
 const call = api.call;
 const toaster = api.toaster;
 
-class DeckyDictationLogic {
-    constructor() {
-        this.pressedAt = Date.now();
-        this.enabled = false;
-        this.dictating = false;
-        this.pushToDictate = false;
-        this.notify = async (message, duration = 1000, body = "") => {
-            if (!body) {
-                body = message;
-            }
-            toaster.toast({
-                title: message,
-                body: body,
-                duration: duration,
-                critical: true
-            });
-        };
-        this.handleButtonInput = async (val) => {
-            for (const inputs of val) {
-                console.log("inputs");
-                console.log(inputs);
-                console.log("inputs.unControllerIndex");
-                console.log(inputs.unControllerIndex);
-                this.notify("Decky Dictation", 3000, "Starting speech to text input");
-            }
-        };
-    }
-}
-// let logic = new DeckyDictationLogic();
-// let input_register = window.SteamClient.Input.RegisterForControllerStateChanges(logic.handleButtonInput);
-
 const formatGameLabel = (game) => {
     if (!game)
         return "No game running";
@@ -173,10 +142,6 @@ const PluginContent = () => {
             console.log(toggleState);
             console.log("SteamClient.Input.ShowControllerSettings()");
             console.log(SteamClient.Input.ShowControllerSettings());
-            let logic = new DeckyDictationLogic();
-            let input_register = SteamClient.Input.RegisterForControllerStateChanges(logic.handleButtonInput);
-            console.log("input_register");
-            console.log(input_register);
             setToggleState(val);
         }
         catch (error) {
@@ -201,7 +166,42 @@ const PluginContent = () => {
                     language ?? "Loading...")))));
 };
 
+class DeckyDictationLogic {
+    constructor() {
+        this.pressedAt = Date.now();
+        this.enabled = false;
+        this.dictating = false;
+        this.pushToDictate = false;
+        this.notify = async (message, duration = 1000, body = "") => {
+            if (!body) {
+                body = message;
+            }
+            toaster.toast({
+                title: message,
+                body: body,
+                duration: duration,
+                critical: true
+            });
+        };
+        this.handleButtonInput = async (val) => {
+            for (const inputs of val) {
+                console.log("inputs");
+                console.log(inputs);
+                console.log("inputs.unControllerIndex");
+                console.log(inputs.unControllerIndex);
+                this.notify("Decky Dictation", 3000, "Starting speech to text input");
+            }
+        };
+    }
+}
+// let logic = new DeckyDictationLogic();
+// let input_register = window.SteamClient.Input.RegisterForControllerStateChanges(logic.handleButtonInput);
+
 var index = DFL.definePlugin(() => {
+    let logic = new DeckyDictationLogic();
+    let input_register = SteamClient.Input.RegisterForControllerStateChanges(logic.handleButtonInput);
+    console.log("input_register");
+    console.log(input_register);
     return {
         title: window.SP_REACT.createElement("div", null, "Toggle Trackpad"),
         content: window.SP_REACT.createElement(PluginContent, null),

@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { PanelSection, PanelSectionRow, ToggleField, Router } from "@decky/ui";
 import { call } from "@decky/api";
-import { DeckyDictationLogic } from "./decky-dict-class";
 
 type Game = {
   appid: string;
@@ -51,7 +50,7 @@ const PluginContent = () => {
   }, []);
 
   // Fetch plugin state when game changes
-  useEffect(() => {    
+  useEffect(() => {
     if (!game) return;
 
     const fetchState = async () => {
@@ -81,10 +80,6 @@ const PluginContent = () => {
       console.log("SteamClient.Input.ShowControllerSettings()");
       console.log(SteamClient.Input.ShowControllerSettings());
 
-    let logic = new DeckyDictationLogic();
-    let input_register = SteamClient.Input.RegisterForControllerStateChanges(logic.handleButtonInput);
-    console.log("input_register");
-    console.log(input_register);
 
       setToggleState(val);
     } catch (error) {
