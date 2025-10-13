@@ -81,12 +81,21 @@ const PluginContent = () => {
       // console.log(await SteamClient.Input.DuplicateControllerConfigurationSourceMode(0,"Default"));
       // console.log("ExportCurrentControllerConfiguration");
       // console.log(await SteamClient.Input.ExportCurrentControllerConfiguration(0, 606150, 0, "Default", "Duplicated from console", "Defaultttt"));
-
-      console.log("SteamClient.Input.GetControllerMappingString(0)")
-      console.log(await SteamClient.Input.GetControllerMappingString(0))
-      const controllerIndex = 0; // Steam Deck usually uses index 0
-      const mappingString = await SteamClient.Input.GetControllerMappingString(controllerIndex);
-      console.log("🎮 Controller Mapping:", mappingString);
+      const getMapping = async (numb:number) => {
+        console.log(`SteamClient.Input.GetControllerMappingString(${numb})`)
+        console.log(await SteamClient.Input.GetControllerMappingString(numb))
+        const mappingString = await SteamClient.Input.GetControllerMappingString(numb);
+        console.log("🎮 Controller Mapping:", mappingString);
+      }
+      await getMapping(0);
+      await getMapping(1);
+      await getMapping(2);
+      console.log("SteamClient.Input.RegisterForActiveControllerChanges");
+      console.log(SteamClient.Input.RegisterForActiveControllerChanges);
+      console.log("SteamClient.Input.RegisterForControllerStateChanges((change)=>{console.log(change,change)");
+      console.log(SteamClient.Input.RegisterForControllerStateChanges((change)=>{console.log("change",change);
+      }));
+      
 
       setToggleState(val);
     } catch (error) {
