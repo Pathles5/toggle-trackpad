@@ -54,7 +54,7 @@ const PluginContent = () => {
   useEffect(() => {
 
     let logic = new DeckyDictationLogic();
-    let input_register = window.SteamClient.Input.RegisterForControllerStateChanges(logic.handleButtonInput);
+    let input_register = SteamClient.Input.RegisterForControllerStateChanges(logic.handleButtonInput);
     console.log("input_register");
     console.log(input_register);
     
