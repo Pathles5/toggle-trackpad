@@ -20,7 +20,7 @@ export class DeckyDictationLogic {
         });
     }
 
-    handleButtonInput = async (val: any[]) => {
+    handleButtonInput = (val: any[]) => {
         for (const inputs of val) {
             console.log("inputs");
             console.log(inputs);

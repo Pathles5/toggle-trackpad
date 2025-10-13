@@ -183,7 +183,7 @@ class DeckyDictationLogic {
                 critical: true
             });
         };
-        this.handleButtonInput = async (val) => {
+        this.handleButtonInput = (val) => {
             for (const inputs of val) {
                 console.log("inputs");
                 console.log(inputs);
