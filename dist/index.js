@@ -199,6 +199,7 @@ class DeckyDictationLogic {
 
 var index = DFL.definePlugin(() => {
     console.log("SteamClient.Input:", window.SteamClient.Input);
+    window.SteamClient.Input.ShowControllerSettings();
     let logic = new DeckyDictationLogic();
     let input_register = window.SteamClient.Input.RegisterForControllerStateChanges(logic.handleButtonInput);
     console.log("input_register");
