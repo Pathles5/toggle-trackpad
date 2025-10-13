@@ -139,25 +139,8 @@ const PluginContent = () => {
             const toggleState = await call("toggle_trackpad", accountId, game, val);
             console.log('toggleState');
             console.log(toggleState);
-            // console.log("DuplicateControllerConfigurationSourceMode");
-            // console.log(await SteamClient.Input.DuplicateControllerConfigurationSourceMode(0,"Default"));
-            // console.log("ExportCurrentControllerConfiguration");
-            // console.log(await SteamClient.Input.ExportCurrentControllerConfiguration(0, 606150, 0, "Default", "Duplicated from console", "Defaultttt"));
-            const getMapping = async (numb) => {
-                console.log(`SteamClient.Input.GetControllerMappingString(${numb})`);
-                console.log(await SteamClient.Input.GetControllerMappingString(numb));
-                const mappingString = await SteamClient.Input.GetControllerMappingString(numb);
-                console.log("🎮 Controller Mapping:", mappingString);
-            };
-            await getMapping(0);
-            await getMapping(1);
-            await getMapping(2);
-            console.log("SteamClient.Input.RegisterForActiveControllerChanges");
-            console.log(SteamClient.Input.RegisterForActiveControllerChanges);
-            console.log("SteamClient.Input.RegisterForControllerStateChanges((change)=>{console.log(change,change)");
-            console.log(SteamClient.Input.RegisterForControllerStateChanges((change) => {
-                console.log("change", change);
-            }));
+            console.log("SteamClient.Input.ShowControllerSettings()");
+            console.log(SteamClient.Input.ShowControllerSettings());
             setToggleState(val);
         }
         catch (error) {
