@@ -152,10 +152,6 @@ const PluginContent = () => {
     }, []);
     // Fetch plugin state when game changes
     SP_REACT.useEffect(() => {
-        let logic = new DeckyDictationLogic();
-        let input_register = SteamClient.Input.RegisterForControllerStateChanges(logic.handleButtonInput);
-        console.log("input_register");
-        console.log(input_register);
         if (!game)
             return;
         const fetchState = async () => {
@@ -177,6 +173,10 @@ const PluginContent = () => {
             console.log(toggleState);
             console.log("SteamClient.Input.ShowControllerSettings()");
             console.log(SteamClient.Input.ShowControllerSettings());
+            let logic = new DeckyDictationLogic();
+            let input_register = SteamClient.Input.RegisterForControllerStateChanges(logic.handleButtonInput);
+            console.log("input_register");
+            console.log(input_register);
             setToggleState(val);
         }
         catch (error) {
