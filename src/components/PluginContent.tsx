@@ -76,6 +76,10 @@ const PluginContent = () => {
       );
       console.log('toggleState');
       console.log(toggleState);
+      console.log("SteamClient.Input.GetControllerMappingString(15)");
+      console.log(await SteamClient.Input.GetControllerMappingString(15));
+      console.log(SteamClient.Input.GetControllerMappingString(15));
+      
       setToggleState(val);
     } catch (error) {
       console.error(`[Toggle Trackpad] Error toggling:`, error);
