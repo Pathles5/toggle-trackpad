@@ -200,7 +200,7 @@ const PluginContent = () => {
                     "Language: ",
                     language ?? "Loading..."))),
         window.SP_REACT.createElement(DFL.PanelSectionRow, null,
-            window.SP_REACT.createElement("button", { onClick: () => openControllerSettings(game?.appid), style: { width: "100%" } }, "Open Controller Settings"))));
+            window.SP_REACT.createElement("button", { onClick: () => openControllerSettings(`${game?.appid}`), style: { width: "100%" } }, "Open Controller Settings"))));
 };
 
 // import { DeckyDictationLogic } from "./components/decky-dict-class";
