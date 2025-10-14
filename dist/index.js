@@ -140,7 +140,10 @@ const PluginContent = () => {
             console.log('toggleState');
             console.log(toggleState);
             console.log("SteamClient.Input.GetControllerMappingString(15)");
-            console.log(await Promise.resolve(SteamClient.Input.GetControllerMappingString(15)));
+            const response = await SteamClient.Input.GetControllerMappingString(15);
+            console.log("response:", response);
+            console.log({ response });
+            console.log(typeof response);
             setToggleState(val);
         }
         catch (error) {
@@ -167,7 +170,7 @@ const PluginContent = () => {
 
 // import { DeckyDictationLogic } from "./components/decky-dict-class";
 var index = DFL.definePlugin(() => {
-    console.log("SteamClient.Input:", window.SteamClient.Input);
+    // console.log("SteamClient.Input:", window.SteamClient.Input);
     // let logic = new DeckyDictationLogic();
     // let input_register = window.SteamClient.Input.RegisterForControllerStateChanges(logic.handleButtonInput);
     // console.log("input_register");

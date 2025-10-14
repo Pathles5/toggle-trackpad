@@ -4,7 +4,7 @@ import PluginContent from "./components/PluginContent";
 // import { DeckyDictationLogic } from "./components/decky-dict-class";
 
 export default definePlugin(() => {
-  console.log("SteamClient.Input:", window.SteamClient.Input);
+  // console.log("SteamClient.Input:", window.SteamClient.Input);
 
   // let logic = new DeckyDictationLogic();
   // let input_register = window.SteamClient.Input.RegisterForControllerStateChanges(logic.handleButtonInput);
