@@ -79,7 +79,7 @@ const PluginContent = () => {
 
       console.log("SteamClient.Input.ShowControllerSettings()");
       console.log(SteamClient.Input.ShowControllerSettings());
-
+      window.SteamClient.Input.ShowControllerSettings()
 
       setToggleState(val);
     } catch (error) {

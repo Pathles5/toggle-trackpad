@@ -85,7 +85,6 @@ if (api._version != API_VERSION) {
 }
 // TODO these could use a lot of JSDoc
 const call = api.call;
-const toaster = api.toaster;
 
 const formatGameLabel = (game) => {
     if (!game)
@@ -142,6 +141,7 @@ const PluginContent = () => {
             console.log(toggleState);
             console.log("SteamClient.Input.ShowControllerSettings()");
             console.log(SteamClient.Input.ShowControllerSettings());
+            window.SteamClient.Input.ShowControllerSettings();
             setToggleState(val);
         }
         catch (error) {
@@ -166,44 +166,13 @@ const PluginContent = () => {
                     language ?? "Loading...")))));
 };
 
-class DeckyDictationLogic {
-    constructor() {
-        this.pressedAt = Date.now();
-        this.enabled = false;
-        this.dictating = false;
-        this.pushToDictate = false;
-        this.notify = async (message, duration = 1000, body = "") => {
-            if (!body) {
-                body = message;
-            }
-            toaster.toast({
-                title: message,
-                body: body,
-                duration: duration,
-                critical: true
-            });
-        };
-        this.handleButtonInput = (val) => {
-            for (const inputs of val) {
-                console.log("inputs");
-                console.log(inputs);
-                console.log("inputs.unControllerIndex");
-                console.log(inputs.unControllerIndex);
-                this.notify("Decky Dictation", 3000, "Starting speech to text input");
-            }
-        };
-    }
-}
-// let logic = new DeckyDictationLogic();
-// let input_register = window.SteamClient.Input.RegisterForControllerStateChanges(logic.handleButtonInput);
-
+// import { DeckyDictationLogic } from "./components/decky-dict-class";
 var index = DFL.definePlugin(() => {
     console.log("SteamClient.Input:", window.SteamClient.Input);
-    window.SteamClient.Input.ShowControllerSettings();
-    let logic = new DeckyDictationLogic();
-    let input_register = window.SteamClient.Input.RegisterForControllerStateChanges(logic.handleButtonInput);
-    console.log("input_register");
-    console.log(input_register);
+    // let logic = new DeckyDictationLogic();
+    // let input_register = window.SteamClient.Input.RegisterForControllerStateChanges(logic.handleButtonInput);
+    // console.log("input_register");
+    // console.log(input_register);
     return {
         title: window.SP_REACT.createElement("div", null, "Toggle Trackpad"),
         content: window.SP_REACT.createElement(PluginContent, null),
