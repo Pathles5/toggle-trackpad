@@ -99,17 +99,24 @@ const PluginContent = () => {
     const [accountId, setAccountId] = SP_REACT.useState(null);
     const [language, setLanguage] = SP_REACT.useState(null);
     const [game, setGame] = SP_REACT.useState(null);
-    // Fetch Steam info and current game
+    // Fetch Steam info, current game, and run controller mapping tests
     SP_REACT.useEffect(() => {
         const fetchSteamInfo = async () => {
             try {
-                console.log("Overlay API:", Object.entries(SteamClient.Overlay || {}).map(([k, v]) => `${k}: ${typeof v}`));
+                // ——— Aquí empezamos las pruebas ———
+                console.log("🔍 Overlay API:", Object.entries(SteamClient.Overlay || {}).map(([k, v]) => `${k}: ${typeof v}`));
                 const controllerIndex = 0;
-                console.log(`SteamClient.Input.GetControllerMappingString(${controllerIndex})`);
-                const response = await SteamClient.Input.GetControllerMappingString(controllerIndex);
-                console.log("response:", response);
-                console.log({ response });
-                console.log(typeof response);
+                console.log(`🚀 Testing GetControllerMappingString(${controllerIndex})…`);
+                if (SteamClient.Input?.GetControllerMappingString) {
+                    const response = await SteamClient.Input.GetControllerMappingString(controllerIndex);
+                    console.log("✅ response (raw):", response);
+                    console.log("✅ response (object):", { response });
+                    console.log("✅ typeof response:", typeof response);
+                }
+                else {
+                    console.warn("⚠️ SteamClient.Input.GetControllerMappingString not available");
+                }
+                // ——— Aquí acaban las pruebas ———
                 const id = await SteamClient.WebChat.GetCurrentUserAccountID();
                 const lang = await SteamClient.Settings.GetCurrentLanguage();
                 setAccountId(id.toString());
@@ -144,8 +151,7 @@ const PluginContent = () => {
     const handleToggle = async (val) => {
         try {
             const toggleState = await call("toggle_trackpad", accountId, game, val);
-            console.log('toggleState');
-            console.log(toggleState);
+            console.log("🔄 toggleTrackpad result:", toggleState);
             setToggleState(val);
         }
         catch (error) {

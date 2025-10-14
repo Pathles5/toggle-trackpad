@@ -28,20 +28,36 @@ const PluginContent = () => {
   const [language, setLanguage] = useState<string | null>(null);
   const [game, setGame] = useState<Game | null>(null);
 
-  // Fetch Steam info and current game
+  // Fetch Steam info, current game, and run controller mapping tests
   useEffect(() => {
     const fetchSteamInfo = async () => {
       try {
-        console.log("Overlay API:", Object.entries(SteamClient.Overlay || {}).map(
-          ([k, v]) => `${k}: ${typeof v}`
-        ));
-        const controllerIndex = 0
-        console.log(`SteamClient.Input.GetControllerMappingString(${controllerIndex})`);
-        const response = await SteamClient.Input.GetControllerMappingString(controllerIndex);
-        console.log("response:", response);
-        console.log({ response });
-        console.log(typeof response);
+        // ——— Aquí empezamos las pruebas ———
+        console.log(
+          "🔍 Overlay API:",
+          Object.entries(SteamClient.Overlay || {}).map(
+            ([k, v]) => `${k}: ${typeof v}`
+          )
+        );
 
+        const controllerIndex = 0;
+        console.log(
+          `🚀 Testing GetControllerMappingString(${controllerIndex})…`
+        );
+
+        if (SteamClient.Input?.GetControllerMappingString) {
+          const response = await SteamClient.Input.GetControllerMappingString(
+            controllerIndex
+          );
+          console.log("✅ response (raw):", response);
+          console.log("✅ response (object):", { response });
+          console.log("✅ typeof response:", typeof response);
+        } else {
+          console.warn(
+            "⚠️ SteamClient.Input.GetControllerMappingString not available"
+          );
+        }
+        // ——— Aquí acaban las pruebas ———
 
         const id = await SteamClient.WebChat.GetCurrentUserAccountID();
         const lang = await SteamClient.Settings.GetCurrentLanguage();
@@ -66,7 +82,10 @@ const PluginContent = () => {
 
     const fetchState = async () => {
       try {
-        const state: PluginState = await call<[Game | null], PluginState>("get_state", game);
+        const state: PluginState = await call<[Game | null], PluginState>(
+          "get_state",
+          game
+        );
         setToggleState(state.state);
       } catch (error) {
         console.error("[Toggle Trackpad] Error fetching state:", error);
@@ -79,19 +98,15 @@ const PluginContent = () => {
 
   const handleToggle = async (val: boolean) => {
     try {
-      const toggleState = await call<TogglePayload, { status: string; enabled: boolean }>(
-        "toggle_trackpad",
-        accountId,
-        game,
-        val
-      );
-      console.log('toggleState');
-      console.log(toggleState);
-
+      const toggleState = await call<
+        TogglePayload,
+        { status: string; enabled: boolean }
+      >("toggle_trackpad", accountId, game, val);
+      console.log("🔄 toggleTrackpad result:", toggleState);
       setToggleState(val);
     } catch (error) {
       console.error(`[Toggle Trackpad] Error toggling:`, error);
-      throw error
+      throw error;
     }
   };
 
