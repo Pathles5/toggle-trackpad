@@ -72,6 +72,8 @@ const PluginContent = () => {
 
   // Fetch plugin state when game changes
   useEffect(() => {
+    console.log("game type", game, typeof game)
+    console.log("game.appid type", game?.appid, typeof game?.appid)
     if (!game) return;
 
     const fetchState = async () => {
@@ -126,6 +128,7 @@ const PluginContent = () => {
           <div>Language: {language ?? "Loading..."}</div>
         </div>
       </PanelSectionRow>
+      
       <PanelSectionRow>
         <button
           onClick={() => openControllerSettings(game?.appid)}

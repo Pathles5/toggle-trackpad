@@ -155,6 +155,8 @@ const PluginContent = () => {
     }, []);
     // Fetch plugin state when game changes
     SP_REACT.useEffect(() => {
+        console.log("game type", game, typeof game);
+        console.log("game.appid type", game?.appid, typeof game?.appid);
         if (!game)
             return;
         const fetchState = async () => {
