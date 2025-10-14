@@ -104,7 +104,7 @@ function openControllerSettings(appId) {
         // 1) Abrir el configurador de Steam Input para el juego activo
         ov.HandleProtocolForOverlayBrowser(Number(appId), "steam://open/controller_configuration");
         // 2) Forzar la superposición en primer plano usando el enum ‘Overlay’
-        ov.SetOverlayState(appId, DFL.EUIComposition.Overlay);
+        ov.SetOverlayState(`${appId}`, DFL.EUIComposition.Overlay);
     }
 }
 

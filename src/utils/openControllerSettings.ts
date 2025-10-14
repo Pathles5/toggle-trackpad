@@ -22,6 +22,6 @@ export function openControllerSettings(appId: string | null | undefined) {
     );
 
     // 2) Forzar la superposición en primer plano usando el enum ‘Overlay’
-    ov.SetOverlayState(appId, EUIComposition.Overlay);
+    ov.SetOverlayState(`${appId}`, EUIComposition.Overlay);
   }
 }
