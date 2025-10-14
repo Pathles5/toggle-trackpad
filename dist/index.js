@@ -85,6 +85,26 @@ if (api._version != API_VERSION) {
 }
 // TODO these could use a lot of JSDoc
 const call = api.call;
+const toaster = api.toaster;
+
+// utils/openControllerSettings.ts
+
+function openControllerSettings(appId) {
+    const ov = SteamClient.Overlay;
+    if (!ov) {
+        toaster.toast({
+            title: "Overlay no disponible",
+            body: "No se encontró la API de Steam Overlay.",
+            duration: 3000,
+            critical: true,
+        });
+        return;
+    }
+    // 1) Abrir el configurador de Steam Input para el juego activo
+    ov.HandleProtocolForOverlayBrowser(Number(appId), "steam://open/controller_configuration");
+    // 2) Forzar la superposición en primer plano usando el enum ‘Overlay’
+    ov.SetOverlayState(appId, DFL.EUIComposition.Overlay);
+}
 
 const formatGameLabel = (game) => {
     if (!game)
@@ -99,12 +119,11 @@ const PluginContent = () => {
     const [accountId, setAccountId] = SP_REACT.useState(null);
     const [language, setLanguage] = SP_REACT.useState(null);
     const [game, setGame] = SP_REACT.useState(null);
-    // Fetch Steam info, current game, and run controller mapping tests
+    // Fetch Steam info and current game
     SP_REACT.useEffect(() => {
         const fetchSteamInfo = async () => {
             try {
-                // ——— Aquí empezamos las pruebas ———
-                console.log("🔍 Overlay API:", Object.entries(SteamClient.Overlay || {}).map(([k, v]) => `${k}: ${typeof v}`));
+                //Aqui estamos haciendo las pruebas
                 const controllerIndex = 0;
                 console.log(`🚀 Testing GetControllerMappingString(${controllerIndex})…`);
                 if (SteamClient.Input?.GetControllerMappingString) {
@@ -116,7 +135,7 @@ const PluginContent = () => {
                 else {
                     console.warn("⚠️ SteamClient.Input.GetControllerMappingString not available");
                 }
-                // ——— Aquí acaban las pruebas ———
+                // Aqui acaban las pruebas
                 const id = await SteamClient.WebChat.GetCurrentUserAccountID();
                 const lang = await SteamClient.Settings.GetCurrentLanguage();
                 setAccountId(id.toString());
@@ -151,7 +170,8 @@ const PluginContent = () => {
     const handleToggle = async (val) => {
         try {
             const toggleState = await call("toggle_trackpad", accountId, game, val);
-            console.log("🔄 toggleTrackpad result:", toggleState);
+            console.log('toggleState');
+            console.log(toggleState);
             setToggleState(val);
         }
         catch (error) {
@@ -174,7 +194,9 @@ const PluginContent = () => {
                     accountId ?? "Loading..."),
                 window.SP_REACT.createElement("div", null,
                     "Language: ",
-                    language ?? "Loading...")))));
+                    language ?? "Loading..."))),
+        window.SP_REACT.createElement(DFL.PanelSectionRow, null,
+            window.SP_REACT.createElement("button", { onClick: () => game != null ? openControllerSettings(game.appid) : null, style: { width: "100%" } }, "Open Controller Settings"))));
 };
 
 // import { DeckyDictationLogic } from "./components/decky-dict-class";

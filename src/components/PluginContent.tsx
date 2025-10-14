@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { PanelSection, PanelSectionRow, ToggleField, Router } from "@decky/ui";
 import { call } from "@decky/api";
+import { openControllerSettings } from "../utils/openControllerSettings";
 
 type Game = {
   appid: string;
@@ -28,18 +29,11 @@ const PluginContent = () => {
   const [language, setLanguage] = useState<string | null>(null);
   const [game, setGame] = useState<Game | null>(null);
 
-  // Fetch Steam info, current game, and run controller mapping tests
+  // Fetch Steam info and current game
   useEffect(() => {
     const fetchSteamInfo = async () => {
       try {
-        // ——— Aquí empezamos las pruebas ———
-        console.log(
-          "🔍 Overlay API:",
-          Object.entries(SteamClient.Overlay || {}).map(
-            ([k, v]) => `${k}: ${typeof v}`
-          )
-        );
-
+        //Aqui estamos haciendo las pruebas
         const controllerIndex = 0;
         console.log(
           `🚀 Testing GetControllerMappingString(${controllerIndex})…`
@@ -57,7 +51,7 @@ const PluginContent = () => {
             "⚠️ SteamClient.Input.GetControllerMappingString not available"
           );
         }
-        // ——— Aquí acaban las pruebas ———
+        // Aqui acaban las pruebas
 
         const id = await SteamClient.WebChat.GetCurrentUserAccountID();
         const lang = await SteamClient.Settings.GetCurrentLanguage();
@@ -82,10 +76,7 @@ const PluginContent = () => {
 
     const fetchState = async () => {
       try {
-        const state: PluginState = await call<[Game | null], PluginState>(
-          "get_state",
-          game
-        );
+        const state: PluginState = await call<[Game | null], PluginState>("get_state", game);
         setToggleState(state.state);
       } catch (error) {
         console.error("[Toggle Trackpad] Error fetching state:", error);
@@ -98,15 +89,19 @@ const PluginContent = () => {
 
   const handleToggle = async (val: boolean) => {
     try {
-      const toggleState = await call<
-        TogglePayload,
-        { status: string; enabled: boolean }
-      >("toggle_trackpad", accountId, game, val);
-      console.log("🔄 toggleTrackpad result:", toggleState);
+      const toggleState = await call<TogglePayload, { status: string; enabled: boolean }>(
+        "toggle_trackpad",
+        accountId,
+        game,
+        val
+      );
+      console.log('toggleState');
+      console.log(toggleState);
+
       setToggleState(val);
     } catch (error) {
       console.error(`[Toggle Trackpad] Error toggling:`, error);
-      throw error;
+      throw error
     }
   };
 
@@ -130,6 +125,14 @@ const PluginContent = () => {
           <div>Account ID: {accountId ?? "Loading..."}</div>
           <div>Language: {language ?? "Loading..."}</div>
         </div>
+      </PanelSectionRow>
+      <PanelSectionRow>
+        <button
+          onClick={() => game!=null? openControllerSettings(game.appid):null}
+          style={{ width: "100%" }}
+        >
+          Open Controller Settings
+        </button>
       </PanelSectionRow>
     </PanelSection>
   );
