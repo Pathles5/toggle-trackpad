@@ -148,6 +148,7 @@ const PluginContent = () => {
         }
         catch (error) {
             console.error(`[Toggle Trackpad] Error toggling:`, error);
+            throw error;
         }
     };
     return (window.SP_REACT.createElement(DFL.PanelSection, { title: "Options" },
