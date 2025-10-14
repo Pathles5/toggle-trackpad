@@ -79,7 +79,7 @@ const PluginContent = () => {
 
       console.log("SteamClient.Input.ShowControllerSettings()");
       console.log(SteamClient.Input.ShowControllerSettings());
-      window.SteamClient.Input.ShowControllerSettings()
+      SteamClient.Input.ShowControllerSettings()
 
       setToggleState(val);
     } catch (error) {
@@ -99,7 +99,7 @@ const PluginContent = () => {
           label="Disable Trackpad"
           checked={toggleState}
           onChange={handleToggle}
-          disabled={!game}
+          // disabled={!game}
         />
       </PanelSectionRow>
       <PanelSectionRow>

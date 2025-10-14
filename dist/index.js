@@ -141,7 +141,7 @@ const PluginContent = () => {
             console.log(toggleState);
             console.log("SteamClient.Input.ShowControllerSettings()");
             console.log(SteamClient.Input.ShowControllerSettings());
-            window.SteamClient.Input.ShowControllerSettings();
+            SteamClient.Input.ShowControllerSettings();
             setToggleState(val);
         }
         catch (error) {
@@ -155,7 +155,7 @@ const PluginContent = () => {
                 " ",
                 formatGameLabel(game))),
         window.SP_REACT.createElement(DFL.PanelSectionRow, null,
-            window.SP_REACT.createElement(DFL.ToggleField, { label: "Disable Trackpad", checked: toggleState, onChange: handleToggle, disabled: !game })),
+            window.SP_REACT.createElement(DFL.ToggleField, { label: "Disable Trackpad", checked: toggleState, onChange: handleToggle })),
         window.SP_REACT.createElement(DFL.PanelSectionRow, null,
             window.SP_REACT.createElement("div", { style: { fontSize: "0.9em", opacity: 0.7 } },
                 window.SP_REACT.createElement("div", null,
