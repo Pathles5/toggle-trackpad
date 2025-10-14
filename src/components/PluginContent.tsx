@@ -32,7 +32,9 @@ const PluginContent = () => {
   useEffect(() => {
     const fetchSteamInfo = async () => {
       try {
-
+        console.log("Overlay API:", Object.entries(SteamClient.Overlay || {}).map(
+          ([k, v]) => `${k}: ${typeof v}`
+        ));
         const controllerIndex = 0
         console.log(`SteamClient.Input.GetControllerMappingString(${controllerIndex})`);
         const response = await SteamClient.Input.GetControllerMappingString(controllerIndex);
