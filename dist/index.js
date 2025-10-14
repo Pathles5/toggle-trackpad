@@ -103,6 +103,12 @@ const PluginContent = () => {
     SP_REACT.useEffect(() => {
         const fetchSteamInfo = async () => {
             try {
+                const controllerIndex = 0;
+                console.log(`SteamClient.Input.GetControllerMappingString(${controllerIndex})`);
+                const response = await SteamClient.Input.GetControllerMappingString(controllerIndex);
+                console.log("response:", response);
+                console.log({ response });
+                console.log(typeof response);
                 const id = await SteamClient.WebChat.GetCurrentUserAccountID();
                 const lang = await SteamClient.Settings.GetCurrentLanguage();
                 setAccountId(id.toString());
@@ -139,11 +145,6 @@ const PluginContent = () => {
             const toggleState = await call("toggle_trackpad", accountId, game, val);
             console.log('toggleState');
             console.log(toggleState);
-            console.log("SteamClient.Input.GetControllerMappingString(15)");
-            const response = await SteamClient.Input.GetControllerMappingString(15);
-            console.log("response:", response);
-            console.log({ response });
-            console.log(typeof response);
             setToggleState(val);
         }
         catch (error) {
