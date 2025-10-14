@@ -128,7 +128,7 @@ const PluginContent = () => {
       </PanelSectionRow>
       <PanelSectionRow>
         <button
-          onClick={() => game!=null? openControllerSettings(game.appid):null}
+          onClick={() => openControllerSettings(game?.appid)}
           style={{ width: "100%" }}
         >
           Open Controller Settings

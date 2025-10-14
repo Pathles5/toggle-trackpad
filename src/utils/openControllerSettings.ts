@@ -2,7 +2,7 @@
 import { toaster } from "@decky/api";
 import { EUIComposition } from "@decky/ui";
 
-export function openControllerSettings(appId: string) {
+export function openControllerSettings(appId: string | null | undefined) {
   const ov = SteamClient.Overlay;
   if (!ov) {
     toaster.toast({
@@ -14,12 +14,14 @@ export function openControllerSettings(appId: string) {
     return;
   }
 
-  // 1) Abrir el configurador de Steam Input para el juego activo
-  ov.HandleProtocolForOverlayBrowser(
-    Number(appId),
-    "steam://open/controller_configuration"
-  );
+  if (appId) {
+    // 1) Abrir el configurador de Steam Input para el juego activo
+    ov.HandleProtocolForOverlayBrowser(
+      Number(appId),
+      "steam://open/controller_configuration"
+    );
 
-  // 2) Forzar la superposición en primer plano usando el enum ‘Overlay’
-  ov.SetOverlayState(appId, EUIComposition.Overlay);
+    // 2) Forzar la superposición en primer plano usando el enum ‘Overlay’
+    ov.SetOverlayState(appId, EUIComposition.Overlay);
+  }
 }

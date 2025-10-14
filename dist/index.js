@@ -100,10 +100,12 @@ function openControllerSettings(appId) {
         });
         return;
     }
-    // 1) Abrir el configurador de Steam Input para el juego activo
-    ov.HandleProtocolForOverlayBrowser(Number(appId), "steam://open/controller_configuration");
-    // 2) Forzar la superposición en primer plano usando el enum ‘Overlay’
-    ov.SetOverlayState(appId, DFL.EUIComposition.Overlay);
+    if (appId) {
+        // 1) Abrir el configurador de Steam Input para el juego activo
+        ov.HandleProtocolForOverlayBrowser(Number(appId), "steam://open/controller_configuration");
+        // 2) Forzar la superposición en primer plano usando el enum ‘Overlay’
+        ov.SetOverlayState(appId, DFL.EUIComposition.Overlay);
+    }
 }
 
 const formatGameLabel = (game) => {
@@ -196,7 +198,7 @@ const PluginContent = () => {
                     "Language: ",
                     language ?? "Loading..."))),
         window.SP_REACT.createElement(DFL.PanelSectionRow, null,
-            window.SP_REACT.createElement("button", { onClick: () => game != null ? openControllerSettings(game.appid) : null, style: { width: "100%" } }, "Open Controller Settings"))));
+            window.SP_REACT.createElement("button", { onClick: () => openControllerSettings(game?.appid), style: { width: "100%" } }, "Open Controller Settings"))));
 };
 
 // import { DeckyDictationLogic } from "./components/decky-dict-class";
